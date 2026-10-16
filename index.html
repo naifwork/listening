@@ -3,927 +3,768 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>استوديو محادثات اللغة الإنجليزية التفاعلي | Dialogue Studio</title>
+  <title>استوديو نصوص الاستماع | Listening Studio</title>
   
+  <!-- خط اليمامة الرسمي ومكتبة Tailwind CSS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Alyamama:wght@300..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alyamama:wght@300;400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome للأيقونات -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: {
+              950: '#031a14',
+              900: '#062c22',
+              850: '#0b3d30',
+              800: '#114b3d',
+              700: '#047857',
+              600: '#059669',
+              500: '#10b981',
+              400: '#34d399',
+            }
+          },
+          fontFamily: {
+            alyamama: ['Alyamama', 'sans-serif'],
+            sans: ['Alyamama', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
-    :root {
-      --bg: #0f1013;
-      --card: #111815;
-      --border: #1c2e26;
-      --text: #e6e6ee;
-      --muted: #9597a6;
-      --accent: #059669;
-      --accent-hover: #047857;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Alyamama', system-ui, -apple-system, sans-serif;
-    }
-
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 16px;
-      display: flex;
-      justify-content: center;
-      line-height: 1.6;
+      font-family: 'Alyamama', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #0c4335 0%, #062c22 45%, #031712 100%);
+      min-height: 100vh;
+      color: #f1f5f9;
     }
-
-    .layout-wrapper {
-      width: 100%;
-      max-width: 1100px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    * {
+      font-family: 'Alyamama', sans-serif;
     }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px;
-      position: relative;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-    }
-
-    h1 {
-      font-size: 1.45rem;
-      font-weight: 800;
-      color: #34d399;
-      margin-bottom: 4px;
-    }
-    h2 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #a7f3d0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 10px;
-      border-bottom: 1px solid rgba(16, 185, 129, 0.15);
-      padding-bottom: 6px;
-    }
-    p.sub {
-      font-size: 0.88rem;
-      color: #94a3b8;
-    }
-
-    textarea {
-      width: 100%;
-      height: 130px;
-      background: #090a0d;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: #fff;
-      padding: 12px;
-      font-size: 1rem;
-      resize: vertical;
-      direction: ltr;
-      text-align: left;
-      line-height: 1.6;
-    }
-    textarea:focus { outline: none; border-color: #34d399; }
-
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
-      align-items: center;
-      padding-top: 10px;
-      border-top: 1px solid rgba(16, 185, 129, 0.12);
-    }
-
-    button {
-      padding: 9px 16px;
-      border-radius: 8px;
-      border: none;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: #fff;
-      transition: all 0.2s ease;
-    }
-
-    .btn-success { background: #059669; }
-    .btn-success:hover { background: #047857; }
-    .btn-export-cloud { background: #7c3aed; }
-    .btn-export-cloud:hover { background: #6d28d9; }
-    .btn-record-local { background: #d97706; }
-    .btn-record-local:hover { background: #b45309; }
-    .btn-secondary { background: #1c2620; color: var(--text); border: 1px solid var(--border); }
-    .btn-secondary:hover { background: #26382f; }
-    .btn-sm { padding: 4px 10px; font-size: 0.8rem; border-radius: 6px; }
-
-    .speakers-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .speaker-card {
-      background: #0e1411;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .speaker-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .speaker-name-badge {
-      font-weight: 700;
-      color: #fff;
-      font-size: 1rem;
-    }
-
-    .speaker-controls { display: flex; flex-direction: column; gap: 7px; font-size: 0.85rem; }
-    .control-item { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
-
-    select, input[type="text"], input[type="password"] {
-      background: #090e0b;
-      border: 1px solid #1c2e26;
-      color: #e2e8f0;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 0.85rem;
+    
+    /* ستايل مخصص لأشرطة التمرير ومؤشرات السحب */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #062c22;
+      border: 1px solid #114b3d;
+      height: 6px;
+      border-radius: 9999px;
       outline: none;
     }
-    select { max-width: 260px; cursor: pointer; }
-
-    .dialogue-viewer {
-      direction: ltr;
-      text-align: left;
-      background: #090a0d;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      min-height: 180px;
-      max-height: 480px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .line-bubble {
-      padding: 10px 14px;
-      border-radius: 8px;
-      background: #111a15;
-      border: 1px solid var(--border);
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      transition: all 0.2s;
-    }
-
-    .line-bubble.active-reading {
-      border-color: #34d399;
-      background: rgba(16, 185, 129, 0.15);
-      transform: scale(1.01);
-    }
-
-    .line-speaker {
-      font-weight: 800;
-      font-size: 0.85rem;
-      min-width: 80px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      text-align: center;
-    }
-
-    .line-text { font-size: 1.05rem; line-height: 1.5; color: #e4e4ed; flex: 1; }
-    .line-play-btn {
-      background: #1a2921;
-      border: 1px solid var(--border);
-      border-radius: 6px;
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #34d399;
       cursor: pointer;
-      color: var(--muted);
-      padding: 5px 10px;
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.6);
+      transition: transform 0.15s ease;
     }
-    .line-play-btn:hover { color: #fff; border-color: #34d399; }
-
-    /* نافذة الإعدادات المنبثقة */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
     }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: #111815;
-      border: 1px solid #1c382b;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 520px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    
+    /* سكرول بار مخصص داخل مربع النص */
+    textarea::-webkit-scrollbar {
+      width: 8px;
     }
-    .modal-box label { font-size: 0.85rem; color: #a7f3d0; margin-bottom: 2px; display: block; }
-    .modal-box input { width: 100%; margin-top: 4px; }
+    textarea::-webkit-scrollbar-track {
+      background: #062c22;
+      border-radius: 8px;
+    }
+    textarea::-webkit-scrollbar-thumb {
+      background: #114b3d;
+      border-radius: 8px;
+    }
+    textarea::-webkit-scrollbar-thumb:hover {
+      background: #10b981;
+    }
+    
+    .glow-box {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(52, 211, 153, 0.15);
+    }
   </style>
 </head>
-<body>
+<body class="p-3 sm:p-6 lg:p-8">
 
-<div class="layout-wrapper">
-  
-  <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-      <div>
-        <h1>استوديو المحادثات الصوتية المتعددة</h1>
-        <p class="sub">تخصيص الأصوات (محلياً أو سحابياً)، تجربة فورية، وتحميل مباشر بنقاء كامل وبسرعة موزونة.</p>
+  <div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- 1. ترويسة الموقع -->
+    <header class="text-center space-y-2 py-4">
+      <div class="inline-flex items-center gap-3 bg-emerald-900/60 border border-emerald-500/30 px-5 py-2 rounded-full shadow-lg">
+        <i class="fa-solid fa-microphone-lines text-emerald-400 text-2xl"></i>
+        <h1 class="text-2xl sm:text-3xl font-black tracking-wide text-white">استوديو نصوص الاستماع</h1>
       </div>
-      
-      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 0.85rem;">
-        <button class="btn-secondary btn-sm" onclick="openSettingsModal()">⚙️ إعدادات السحاب (API)</button>
-        <div style="display: flex; align-items: center; gap: 4px;">
-          <label>السرعة:</label>
-          <select id="globalSpeedSelect">
-            <option value="0.7">🐢 بطيء جداً (0.7x)</option>
-            <option value="0.85" selected>🚶 تدريبي (0.85x)</option>
-            <option value="1.0">⚖️ طبيعي (1.0x)</option>
-            <option value="1.15">🚀 سريع (1.15x)</option>
-          </select>
-        </div>
+      <p class="text-emerald-300/80 text-sm sm:text-base font-almarai max-w-xl mx-auto">
+        تحليل ذكي للمحادثات، تصنيف الرواة والمتحدثين تلقائياً، والتشغيل بأصوات طبيعية عالية النقاء
+      </p>
+    </header>
 
-        <div style="display: flex; align-items: center; gap: 4px;">
-          <label>الوقفة:</label>
-          <select id="pauseDurationSelect">
-            <option value="400">0.4 ثانية</option>
-            <option value="800" selected>0.8 ثانية</option>
-            <option value="1200">1.2 ثانية</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>1. نص المحادثة:</h2>
-    <textarea id="dialogueInput" oninput="handleTextInputChange()" placeholder="ألصق أو اكتب الحوار هنا...">Schools Are Great Fun!
-Ali: Good morning Sarah, are you ready for the presentation today?
-Sarah: Good morning Ali! Yes, I prepared all the slides yesterday.
-Saleh: Hey guys! Can I practice presenting with you?
-Sarah: Of course Saleh, let's start reading together!</textarea>
-    
-    <div class="btn-row">
-      <button id="btnPlayAll" class="btn-success" onclick="togglePlayDialogue()">▶️ تشغيل الحوار</button>
-      <button id="btnExportCloud" class="btn-export-cloud" onclick="exportCloudDialogueAudio()">💾 تحميل الأصوات السحابية (WAV مباشر)</button>
-      <button id="btnRecordLocal" class="btn-record-local" onclick="recordAndExportLocalAudio()">🔴 تسجيل وتحميل أصوات المتصفح (مجاني)</button>
-      <button class="btn-secondary" onclick="stopAllPlayback()">⏹️ إيقاف</button>
-    </div>
-  </div>
-
-  <div class="card" id="speakersPanel">
-    <h2>2. تخصيص المتحدثين ونوع الصوت:</h2>
-    <div id="speakersContainer" class="speakers-grid"></div>
-  </div>
-
-  <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-      <h2>3. المتابعة الصفية المباشرة:</h2>
-      <span id="readingStatusNotice" style="font-size: 0.85rem; color: var(--muted);">جاهز للتشغيل</span>
-    </div>
-    <div id="dialogueViewer" class="dialogue-viewer"></div>
-  </div>
-
-  <footer style="text-align: center; padding: 14px 0 6px; font-size: 0.9rem; color: var(--muted);">
-    Built with <span style="color: #f59e0b;">⚡</span> By: <span style="color: #34d399; font-weight: 700;">Naif</span>
-  </footer>
-</div>
-
-<!-- نافذة إعدادات المفاتيح السحابية -->
-<div id="settingsModal" class="modal-overlay">
-  <div class="modal-box">
-    <h3 style="color:#34d399;">⚙️ إعدادات المفاتيح السحابية</h3>
-    <p style="font-size:0.8rem; color:#94a3b8;">المفاتيح تُحفظ محلياً على متصفحك فقط. اترك الحقل فارغاً لاستخدام أصوات المتصفح المجانية بدون إنترنت.</p>
-    
-    <div>
-      <label>Microsoft Azure TTS Key:</label>
-      <input type="password" id="azureKeyInput" placeholder="أدخل مفتاح Azure...">
-      <label style="margin-top:4px;">Azure Region (المنطقة):</label>
-      <input type="text" id="azureRegionInput" placeholder="مثال: eastus">
-    </div>
-
-    <div>
-      <label>Google Cloud TTS API Key:</label>
-      <input type="password" id="googleKeyInput" placeholder="أدخل مفتاح Google Cloud...">
-    </div>
-
-    <div>
-      <label>ElevenLabs API Key:</label>
-      <input type="password" id="elevenKeyInput" placeholder="أدخل مفتاح ElevenLabs...">
-    </div>
-
-    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-      <button class="btn-secondary" onclick="closeSettingsModal()">إلغاء</button>
-      <button class="btn-success" onclick="saveCloudSettings()">حفظ الإعدادات</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  let availableVoices = [];
-  let parsedLines = [];
-  let detectedSpeakers = {};
-  let isPlaying = false;
-  let shouldStop = false;
-  let currentAudioPlayer = null;
-  let textDebounceTimer = null;
-
-  const cloudVoicesCatalog = {
-    azure: [
-      { id: 'en-US-JennyNeural', name: 'Jenny', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'en-US-GuyNeural', name: 'Guy', gender: 'رجل', country: 'أمريكا' },
-      { id: 'en-US-AriaNeural', name: 'Aria', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'en-US-DavisNeural', name: 'Davis', gender: 'رجل', country: 'أمريكا' },
-      { id: 'en-US-AmberNeural', name: 'Amber', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'en-US-JasonNeural', name: 'Jason', gender: 'رجل', country: 'أمريكا' },
-      { id: 'en-US-SaraNeural', name: 'Sara', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'en-US-TonyNeural', name: 'Tony', gender: 'رجل', country: 'أمريكا' },
-      { id: 'en-GB-RyanNeural', name: 'Ryan', gender: 'رجل', country: 'بريطانيا' },
-      { id: 'en-GB-SoniaNeural', name: 'Sonia', gender: 'امرأة', country: 'بريطانيا' },
-      { id: 'en-GB-AlfieNeural', name: 'Alfie', gender: 'رجل', country: 'بريطانيا' },
-      { id: 'en-GB-LibbyNeural', name: 'Libby', gender: 'امرأة', country: 'بريطانيا' },
-      { id: 'en-GB-OliverNeural', name: 'Oliver', gender: 'رجل', country: 'بريطانيا' },
-      { id: 'en-GB-MaisieNeural', name: 'Maisie', gender: 'امرأة', country: 'بريطانيا' },
-      { id: 'en-GB-BellaNeural', name: 'Bella', gender: 'امرأة', country: 'بريطانيا' }
-    ],
-    google: [
-      { id: 'en-US-Journey-F', name: 'Journey-F', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'en-US-Journey-D', name: 'Journey-D', gender: 'رجل', country: 'أمريكا' },
-      { id: 'en-US-Neural2-C', name: 'Neural-C', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'en-US-Neural2-D', name: 'Neural-D', gender: 'رجل', country: 'أمريكا' },
-      { id: 'en-US-Neural2-E', name: 'Neural-E', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'en-US-Neural2-I', name: 'Neural-I', gender: 'رجل', country: 'أمريكا' },
-      { id: 'en-US-Studio-O', name: 'Studio-O', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'en-US-Studio-Q', name: 'Studio-Q', gender: 'رجل', country: 'أمريكا' },
-      { id: 'en-GB-Neural2-A', name: 'Neural-A', gender: 'امرأة', country: 'بريطانيا' },
-      { id: 'en-GB-Neural2-B', name: 'Neural-B', gender: 'رجل', country: 'بريطانيا' },
-      { id: 'en-GB-Neural2-C', name: 'Neural-C', gender: 'امرأة', country: 'بريطانيا' },
-      { id: 'en-GB-Neural2-D', name: 'Neural-D', gender: 'رجل', country: 'بريطانيا' },
-      { id: 'en-GB-Neural2-F', name: 'Neural-F', gender: 'امرأة', country: 'بريطانيا' },
-      { id: 'en-GB-Studio-B', name: 'Studio-B', gender: 'رجل', country: 'بريطانيا' },
-      { id: 'en-GB-Studio-C', name: 'Studio-C', gender: 'امرأة', country: 'بريطانيا' }
-    ],
-    eleven: [
-      { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'ErXwobaYiN019PkySvjV', name: 'Antoni', gender: 'رجل', country: 'أمريكا' },
-      { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', gender: 'رجل', country: 'أمريكا' },
-      { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', gender: 'رجل', country: 'أمريكا' },
-      { id: 'piTKgcLEGmPE4e6mEKli', name: 'Nicole', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'VR6AewLTigWG4xSOukaG', name: 'Arnold', gender: 'رجل', country: 'أمريكا' },
-      { id: 'oWAxZDx7w5VEj9dCyTzz', name: 'Grace', gender: 'امرأة', country: 'أمريكا' },
-      { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George', gender: 'رجل', country: 'بريطانيا' },
-      { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'Alice', gender: 'امرأة', country: 'بريطانيا' },
-      { id: 'XB0fDUnXU5powFXDhCwa', name: 'Charlotte', gender: 'امرأة', country: 'بريطانيا' },
-      { id: 'N2lVS1w4EtoT3dr4eOWO', name: 'Callum', gender: 'رجل', country: 'بريطانيا' },
-      { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel', gender: 'رجل', country: 'بريطانيا' },
-      { id: 'jsCqWAovK2LkecY7zXl4', name: 'Freya', gender: 'امرأة', country: 'بريطانيا' },
-      { id: 'bIHbv24MWmeRgasZH58o', name: 'Will', gender: 'رجل', country: 'بريطانيا' }
-    ]
-  };
-
-  const colorPalette = [
-    { bg: 'rgba(37, 99, 235, 0.22)', border: '#3b82f6', text: '#93c5fd' },
-    { bg: 'rgba(139, 92, 246, 0.22)', border: '#8b5cf6', text: '#c4b5fd' },
-    { bg: 'rgba(16, 185, 129, 0.22)', border: '#10b981', text: '#6ee7b7' },
-    { bg: 'rgba(245, 158, 11, 0.22)', border: '#f59e0b', text: '#fde68a' }
-  ];
-
-  function openSettingsModal() {
-    document.getElementById('azureKeyInput').value = localStorage.getItem('tts_azure_key') || '';
-    document.getElementById('azureRegionInput').value = localStorage.getItem('tts_azure_region') || 'eastus';
-    document.getElementById('googleKeyInput').value = localStorage.getItem('tts_google_key') || '';
-    document.getElementById('elevenKeyInput').value = localStorage.getItem('tts_eleven_key') || '';
-    document.getElementById('settingsModal').classList.add('open');
-  }
-
-  function closeSettingsModal() {
-    document.getElementById('settingsModal').classList.remove('open');
-  }
-
-  function saveCloudSettings() {
-    localStorage.setItem('tts_azure_key', document.getElementById('azureKeyInput').value.trim());
-    localStorage.setItem('tts_azure_region', document.getElementById('azureRegionInput').value.trim() || 'eastus');
-    localStorage.setItem('tts_google_key', document.getElementById('googleKeyInput').value.trim());
-    localStorage.setItem('tts_eleven_key', document.getElementById('elevenKeyInput').value.trim());
-    closeSettingsModal();
-    renderSpeakersConfig();
-    alert('تم حفظ إعدادات المفاتيح بنجاح.');
-  }
-
-  function populateVoices() {
-    if (!('speechSynthesis' in window)) return;
-    availableVoices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
-    renderSpeakersConfig();
-  }
-
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.onvoiceschanged = populateVoices;
-    populateVoices();
-  }
-
-  function handleTextInputChange() {
-    clearTimeout(textDebounceTimer);
-    textDebounceTimer = setTimeout(() => parseDialogue(true), 350);
-  }
-
-  function parseDialogue(isAuto = false) {
-    if (!isAuto) stopAllPlayback();
-    const rawText = document.getElementById('dialogueInput').value.trim();
-    if (!rawText) return;
-
-    const rawLines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
-    parsedLines = [];
-    const currentFoundSpeakers = [];
-
-    rawLines.forEach((line, index) => {
-      const colonIdx = line.indexOf(':');
-      if (colonIdx > 0 && colonIdx < 30) {
-        const name = line.substring(0, colonIdx).trim();
-        const text = line.substring(colonIdx + 1).trim();
-        if (text) {
-          parsedLines.push({ index, speaker: name, text });
-          if (!currentFoundSpeakers.includes(name)) currentFoundSpeakers.push(name);
-        }
-      } else {
-        parsedLines.push({ index, speaker: 'Title/Narrator', text: line });
-        if (!currentFoundSpeakers.includes('Title/Narrator')) currentFoundSpeakers.push('Title/Narrator');
-      }
-    });
-
-    const updatedSpeakers = {};
-    currentFoundSpeakers.forEach((name, i) => {
-      updatedSpeakers[name] = detectedSpeakers[name] || {
-        voiceType: 'local',
-        voiceValue: '0',
-        color: colorPalette[i % colorPalette.length],
-        skip: false
-      };
-    });
-
-    detectedSpeakers = updatedSpeakers;
-    renderSpeakersConfig();
-    renderViewer();
-  }
-
-  function renderSpeakersConfig() {
-    const container = document.getElementById('speakersContainer');
-    container.innerHTML = '';
-
-    Object.keys(detectedSpeakers).forEach(name => {
-      const conf = detectedSpeakers[name];
-      const card = document.createElement('div');
-      card.className = 'speaker-card';
-      card.style.borderRight = `4px solid ${conf.color.border}`;
-
-      let localOpts = availableVoices.map((v, i) => {
-        const val = `local:${i}`;
-        const isSel = (conf.voiceType === 'local' && conf.voiceValue == i) ? 'selected' : '';
-        const nameLower = v.name.toLowerCase();
-        let country = 'أمريكا';
-        if (nameLower.includes('uk') || nameLower.includes('kingdom')) country = 'بريطانيا';
-        else if (nameLower.includes('india')) country = 'الهند';
-        else if (nameLower.includes('australia')) country = 'أستراليا';
-        else if (nameLower.includes('canada')) country = 'كندا';
-
-        let gender = /female|zira|samantha|aria|jenny/i.test(nameLower) ? 'امرأة' : 'رجل';
-        const clean = v.name.replace(/Microsoft | Online \(Natural\)| - English \(.*?\)/gi, '').trim();
-        return `<option value="${val}" ${isSel}>${clean} — [${gender} / ${country}]</option>`;
-      }).join('');
-
-      let azureOpts = cloudVoicesCatalog.azure.map(v => {
-        const val = `azure:${v.id}`;
-        const isSel = (conf.voiceType === 'azure' && conf.voiceValue === v.id) ? 'selected' : '';
-        return `<option value="${val}" ${isSel}>${v.name} — [${v.gender} / ${v.country}]</option>`;
-      }).join('');
-
-      let googleOpts = cloudVoicesCatalog.google.map(v => {
-        const val = `google:${v.id}`;
-        const isSel = (conf.voiceType === 'google' && conf.voiceValue === v.id) ? 'selected' : '';
-        return `<option value="${val}" ${isSel}>${v.name} — [${v.gender} / ${v.country}]</option>`;
-      }).join('');
-
-      let elevenOpts = cloudVoicesCatalog.eleven.map(v => {
-        const val = `eleven:${v.id}`;
-        const isSel = (conf.voiceType === 'eleven' && conf.voiceValue === v.id) ? 'selected' : '';
-        return `<option value="${val}" ${isSel}>${v.name} — [${v.gender} / ${v.country}]</option>`;
-      }).join('');
-
-      card.innerHTML = `
-        <div class="speaker-card-header">
-          <span class="speaker-name-badge" style="color: ${conf.color.text};">👤 ${name}</span>
-          <button class="btn-secondary btn-sm" onclick="testVoice('${name}')">🔊 تجربة</button>
-        </div>
-        <div class="speaker-controls">
-          <div class="control-item">
-            <label>الصوت:</label>
-            <select onchange="updateSpeakerVoice('${name}', this.value)">
-              <optgroup label="💻 أصوات المتصفح (محلية / مجانية)">${localOpts}</optgroup>
-              <optgroup label="🌐 ElevenLabs (فائق الواقعية)">${elevenOpts}</optgroup>
-              <optgroup label="🌐 Microsoft Azure (سحابي)">${azureOpts}</optgroup>
-              <optgroup label="🌐 Google Cloud (سحابي)">${googleOpts}</optgroup>
-            </select>
-          </div>
-          <div id="cloud_warn_${name}" style="font-size: 0.76rem; color: #fbbf24; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 6px; padding: 4px 8px; margin-top: 2px; display: ${conf.voiceType !== 'local' ? 'block' : 'none'};">
-            ⚠️ <strong>تنبيه:</strong> هذا الصوت سحابي ويستهلك من رصيدك في (<span id="cloud_name_${name}">${conf.voiceType === 'azure' ? 'Microsoft Azure' : conf.voiceType === 'google' ? 'Google Cloud' : 'ElevenLabs'}</span>).
-          </div>
-          ${name === 'Title/Narrator' ? `
-          <div class="control-item" style="border-top:1px dashed #1c2e26; padding-top:4px;">
-            <label><input type="checkbox" onchange="detectedSpeakers['${name}'].skip = this.checked"> تخطي قراءة العنوان</label>
-          </div>` : ''}
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function updateSpeakerVoice(name, value) {
-    const [type, val] = value.split(':');
-    detectedSpeakers[name].voiceType = type;
-    detectedSpeakers[name].voiceValue = val;
-
-    const warnEl = document.getElementById(`cloud_warn_${name}`);
-    const serviceNameEl = document.getElementById(`cloud_name_${name}`);
-    if (warnEl && serviceNameEl) {
-      if (type !== 'local') {
-        const labels = { azure: 'Microsoft Azure', google: 'Google Cloud', eleven: 'ElevenLabs' };
-        serviceNameEl.textContent = labels[type] || 'الخدمة السحابية';
-        warnEl.style.display = 'block';
-      } else {
-        warnEl.style.display = 'none';
-      }
-    }
-  }
-
-  function renderViewer() {
-    const viewer = document.getElementById('dialogueViewer');
-    viewer.innerHTML = '';
-    parsedLines.forEach((item, idx) => {
-      const conf = detectedSpeakers[item.speaker] || { color: colorPalette[0] };
-      const bubble = document.createElement('div');
-      bubble.id = `line_${idx}`;
-      bubble.className = 'line-bubble';
-      bubble.innerHTML = `
-        <span class="line-speaker" style="background:${conf.color.bg}; border: 1px solid ${conf.color.border}; color:${conf.color.text};">
-          ${item.speaker}
+    <!-- 2. منطقة إدخال النص الرئيسي -->
+    <section class="bg-emerald-850/80 border border-emerald-700/50 rounded-2xl p-4 sm:p-6 glow-box">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <label for="scriptText" class="font-bold text-emerald-200 flex items-center gap-2 text-base sm:text-lg">
+          <i class="fa-solid fa-file-lines text-emerald-400"></i>
+          ألصق نص المحادثة أو السيناريو هنا:
+        </label>
+        <span id="detectedCountBadge" class="bg-emerald-950/80 text-emerald-300 border border-emerald-600/40 text-xs px-3 py-1 rounded-full font-mono">
+          تم التعرف على: 0 متحدثين
         </span>
-        <span class="line-text">${item.text}</span>
-        <button class="line-play-btn" onclick="speakLinePromise(${idx})">🔊</button>
-      `;
-      viewer.appendChild(bubble);
-    });
-  }
+      </div>
 
-  async function fetchCloudAudioBlob(speakerConf, text, speed) {
-    if (speakerConf.voiceType === 'eleven') {
-      const key = localStorage.getItem('tts_eleven_key');
-      if (!key) throw new Error('مفتاح ElevenLabs مفقود');
-      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${speakerConf.voiceValue}`, {
-        method: 'POST',
-        headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, model_id: 'eleven_turbo_v2_5' })
-      });
-      if (!res.ok) throw new Error('خطأ في استجابة ElevenLabs');
-      return await res.blob();
+      <textarea id="scriptText" rows="7" dir="auto"
+        class="w-full bg-emerald-950/90 border border-emerald-700/60 rounded-xl p-4 text-emerald-50 font-mono text-sm sm:text-base focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 outline-none transition resize-y text-start"
+        placeholder="الصق الحوار هنا..."></textarea>
+      
+      <p class="text-xs text-emerald-400/70 mt-2 font-almarai flex items-center gap-1.5">
+        <i class="fa-solid fa-circle-info"></i>
+        الأسطر التي تحتوي على (اسم:) تصنف كمتحدث، والأسطر الأخرى تصنف تلقائياً كراوي/عنوان دون نطق اسم الشخصية.
+      </p>
+    </section>
+
+    <!-- 3. إعدادات المحادثة العامة -->
+    <section class="bg-emerald-850/60 border border-emerald-700/40 rounded-2xl p-4 sm:p-6 glow-box">
+      <h2 class="font-bold text-emerald-200 text-base mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-sliders text-emerald-400"></i>
+        إعدادات المحادثة العامة
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- سرعة المحادثة العامة -->
+        <div class="bg-emerald-950/60 border border-emerald-800 p-4 rounded-xl space-y-2">
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-emerald-200">سرعة المحادثة العامة:</span>
+            <span id="globalSpeedVal" class="text-emerald-400 font-mono font-bold">1.0x</span>
+          </div>
+          <input type="range" id="globalSpeed" min="0.5" max="1.5" step="0.05" value="1.0" class="w-full">
+        </div>
+
+        <!-- الوقفات بين الجمل -->
+        <div class="bg-emerald-950/60 border border-emerald-800 p-4 rounded-xl space-y-2">
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-emerald-200">الوقفات بين الجمل:</span>
+            <span id="globalPauseVal" class="text-emerald-400 font-mono font-bold">0.6 ثانية</span>
+          </div>
+          <input type="range" id="globalPause" min="0.1" max="2.5" step="0.1" value="0.6" class="w-full">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. كروت المتحدثين والراوي (ديناميكي بدون حد) -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-bold text-emerald-200 text-lg flex items-center gap-2">
+          <i class="fa-solid fa-users text-emerald-400"></i>
+          تخصيص الأصوات المكتشفة
+        </h2>
+        <span class="text-xs text-emerald-400/80 bg-emerald-900/80 border border-emerald-700/40 px-3 py-1 rounded-lg">
+          يتم سرد الأصوات بأسمائها الرسمية في متصفحك
+        </span>
+      </div>
+
+      <!-- شبكة الكروت -->
+      <div id="speakersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- سيتم توليد الكروت هنا ديناميكياً بواسطة جافاسكربت -->
+      </div>
+    </section>
+
+    <!-- 5. حالة التشغيل الفعلي (Live status toast) -->
+    <div id="statusBox" class="hidden bg-emerald-900 border border-emerald-400/40 p-4 rounded-xl flex items-center gap-3 shadow-xl animate-pulse">
+      <i class="fa-solid fa-volume-high text-emerald-300 text-xl"></i>
+      <div class="flex-1 overflow-hidden">
+        <div id="statusSpeaker" class="text-xs font-bold text-emerald-300">جاري القراءة...</div>
+        <div id="statusText" class="text-sm text-white truncate font-mono"></div>
+      </div>
+    </div>
+
+    <!-- 6. لوحة التحكم وأزرار التحميل والتصدير -->
+    <section class="bg-emerald-950/90 border border-emerald-800 rounded-2xl p-5 glow-box space-y-4">
+      <!-- أزرار التشغيل المباشر -->
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <button id="btnPlayAll" class="flex-1 min-w-[200px] bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-emerald-950 font-bold py-3.5 px-6 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-base active:scale-95">
+          <i class="fa-solid fa-play"></i>
+          تشغيل المحادثة المباشرة
+        </button>
+
+        <button id="btnStop" class="bg-rose-700/80 hover:bg-rose-600 text-white font-bold py-3.5 px-6 rounded-xl transition flex items-center justify-center gap-2 active:scale-95 border border-rose-500/40">
+          <i class="fa-solid fa-stop"></i>
+          إيقاف
+        </button>
+      </div>
+
+      <div class="border-t border-emerald-850 my-2"></div>
+
+      <!-- أزرار التحميل والتسجيل -->
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <!-- زر التحميل الأساسي النقي MP3 -->
+        <button id="btnDownloadAudio" class="flex-1 min-w-[240px] bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-3 px-5 rounded-xl border border-emerald-400/50 shadow transition flex items-center justify-center gap-2 active:scale-95 text-sm sm:text-base">
+          <i class="fa-solid fa-bolt text-yellow-300"></i>
+          تحميل ملف MP3 نقي ومكتمل (سيرفر Edge)
+        </button>
+
+        <!-- زر التسجيل الاحتياطي WebM من صوت النظام الداخلي -->
+        <button id="btnRecordWebM" class="flex-1 min-w-[240px] bg-emerald-900/90 hover:bg-emerald-850 text-emerald-200 font-bold py-3 px-5 rounded-xl border border-emerald-700/60 transition flex items-center justify-center gap-2 active:scale-95 text-sm sm:text-base">
+          <i class="fa-solid fa-desktop text-cyan-400"></i>
+          تسجيل صوت النظام/التبويب (WebM محلي)
+        </button>
+      </div>
+
+      <!-- إشعار حالة التصدير والتسجيل -->
+      <div id="exportStatus" class="hidden text-center text-xs text-emerald-300 font-almarai py-1"></div>
+    </section>
+
+  </div>
+
+  <script>
+    // --- البيانات والحالة العامة للتطبيق ---
+    const defaultSampleText = `Title: Ordering at the Restaurant
+[Scene: At a quiet restaurant during lunchtime]
+Waiter: Welcome! Are you ready to order?
+Fahad: Yes, please. I'd like the grilled chicken.
+Waiter: Sure, anything to drink with that?
+Fahad: Just water, thanks.`;
+
+    let systemVoices = [];
+    let parsedLines = [];
+    let detectedSpeakers = new Set();
+    let speakerConfigs = {}; // حفظ إعدادات الصوت والسرعة لكل متحدث
+    let isPlaying = false;
+    let stopRequested = false;
+
+    // عناصر واجهة المستخدم
+    const scriptTextArea = document.getElementById('scriptText');
+    const detectedBadge = document.getElementById('detectedCountBadge');
+    const speakersContainer = document.getElementById('speakersContainer');
+    const globalSpeedInput = document.getElementById('globalSpeed');
+    const globalSpeedVal = document.getElementById('globalSpeedVal');
+    const globalPauseInput = document.getElementById('globalPause');
+    const globalPauseVal = document.getElementById('globalPauseVal');
+    const btnPlayAll = document.getElementById('btnPlayAll');
+    const btnStop = document.getElementById('btnStop');
+    const btnDownloadAudio = document.getElementById('btnDownloadAudio');
+    const btnRecordWebM = document.getElementById('btnRecordWebM');
+    const statusBox = document.getElementById('statusBox');
+    const statusSpeaker = document.getElementById('statusSpeaker');
+    const statusText = document.getElementById('statusText');
+    const exportStatus = document.getElementById('exportStatus');
+
+    // وضع النص النموذجي المبدئي
+    scriptTextArea.value = defaultSampleText;
+
+    // --- تحميل وتحديث الأصوات من المتصفح بأسمائها الأصلية ---
+    function populateVoices() {
+      systemVoices = window.speechSynthesis.getVoices();
+      
+      // إعادة إنشاء الكروت للحفاظ على قائمة الأصوات كاملة ودقيقة
+      renderSpeakerCards();
     }
 
-    if (speakerConf.voiceType === 'google') {
-      const key = localStorage.getItem('tts_google_key');
-      if (!key) throw new Error('مفتاح Google Cloud مفقود');
-      const langCode = speakerConf.voiceValue.startsWith('en-GB') ? 'en-GB' : 'en-US';
-      const res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${key}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          input: { text },
-          voice: { languageCode: langCode, name: speakerConf.voiceValue },
-          audioConfig: { audioEncoding: 'MP3', speakingRate: speed }
-        })
-      });
-      if (!res.ok) throw new Error('خطأ في استجابة Google');
-      const data = await res.json();
-      return base64ToBlob(data.audioContent, 'audio/mp3');
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = populateVoices;
+      populateVoices();
     }
 
-    if (speakerConf.voiceType === 'azure') {
-      const key = localStorage.getItem('tts_azure_key');
-      const region = localStorage.getItem('tts_azure_region') || 'eastus';
-      if (!key) throw new Error('مفتاح Azure مفقود');
-      const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
-        method: 'POST',
-        headers: {
-          'Ocp-Apim-Subscription-Key': key,
-          'Content-Type': 'application/ssml+xml',
-          'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3'
-        },
-        body: `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' name='${speakerConf.voiceValue}'><prosody rate='${speed}'>${text}</prosody></voice></speak>`
-      });
-      if (!res.ok) throw new Error('خطأ في استجابة Azure');
-      return await res.blob();
+    // ضبط اتجاه مربع النص ديناميكياً بناءً على الحرف الأول
+    function updateTextDirection() {
+      const val = scriptTextArea.value.trim();
+      if (!val) return;
+      const firstChar = val.charAt(0);
+      const isArabic = /[\u0600-\u06FF]/.test(firstChar);
+      scriptTextArea.style.direction = isArabic ? 'rtl' : 'ltr';
+      scriptTextArea.style.textAlign = isArabic ? 'right' : 'left';
     }
-    return null;
-  }
 
-  async function speakLinePromise(idx) {
-    const item = parsedLines[idx];
-    const conf = detectedSpeakers[item.speaker] || { voiceType: 'local', voiceValue: '0' };
-    const speed = parseFloat(document.getElementById('globalSpeedSelect').value) || 0.85;
+    // --- تحليل النص بذكاء واستخراج المتحدثين والرواة دون أي تكرار ---
+    function parseScript() {
+      updateTextDirection();
+      const rawText = scriptTextArea.value;
+      const lines = rawText.split('\n');
+      
+      parsedLines = [];
+      const currentFoundSpeakers = new Set();
 
-    highlightLine(idx);
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
 
-    if (conf.voiceType !== 'local') {
-      try {
-        const blob = await fetchCloudAudioBlob(conf, item.text, speed);
-        if (blob) {
-          await playAudioBlob(blob);
-          unhighlightLine(idx);
+        // السطور التي تبدأ بأقواس مربعة أو عناوين وصفية تحال مباشرة إلى الراوي
+        const isBracketed = trimmed.startsWith('[') || trimmed.startsWith('(');
+        const isTitleOrScene = /^(title|scene):/i.test(trimmed);
+
+        if (isBracketed || isTitleOrScene) {
+          let cleanNarratorText = trimmed.replace(/^\[(.*)\]$/, '$1')
+                                         .replace(/^title:\s*/i, '')
+                                         .replace(/^scene:\s*/i, '')
+                                         .trim();
+          parsedLines.push({
+            type: 'narrator',
+            speaker: 'الراوي / العنوان',
+            text: cleanNarratorText,
+            raw: trimmed
+          });
           return;
         }
-      } catch (e) {
-        console.warn('فشل الصوت السحابي، جاري التحويل للمحلي:', e);
-      }
-    }
 
-    return new Promise(resolve => {
-      if (!('speechSynthesis' in window)) { resolve(); return; }
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(item.text);
-      const vIdx = parseInt(conf.voiceValue, 10) || 0;
-      if (availableVoices[vIdx]) utter.voice = availableVoices[vIdx];
-      utter.rate = speed;
-      utter.onend = () => { unhighlightLine(idx); resolve(); };
-      utter.onerror = () => { unhighlightLine(idx); resolve(); };
-      window.speechSynthesis.speak(utter);
-    });
-  }
+        // فحص المتحدثين الحقيقيين (مثل Fahad: أو Ryan:)
+        const colonIndex = trimmed.indexOf(':');
+        if (colonIndex > 0) {
+          const possibleSpeaker = trimmed.substring(0, colonIndex).trim();
+          const speechContent = trimmed.substring(colonIndex + 1).trim();
 
-  function playAudioBlob(blob) {
-    return new Promise(resolve => {
-      if (currentAudioPlayer) currentAudioPlayer.pause();
-      const url = URL.createObjectURL(blob);
-      currentAudioPlayer = new Audio(url);
-      currentAudioPlayer.onended = () => resolve();
-      currentAudioPlayer.onerror = () => resolve();
-      currentAudioPlayer.play();
-    });
-  }
-
-  function base64ToBlob(base64, type) {
-    const bin = atob(base64);
-    const len = bin.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
-    return new Blob([bytes], { type });
-  }
-
-  function highlightLine(idx) {
-    document.querySelectorAll('.line-bubble').forEach(b => b.classList.remove('active-reading'));
-    const el = document.getElementById(`line_${idx}`);
-    if (el) el.classList.add('active-reading');
-  }
-
-  function unhighlightLine(idx) {
-    const el = document.getElementById(`line_${idx}`);
-    if (el) el.classList.remove('active-reading');
-  }
-
-  function testVoice(speakerName) {
-    const testIdx = parsedLines.findIndex(l => l.speaker === speakerName);
-    if (testIdx !== -1) speakLinePromise(testIdx);
-  }
-
-  async function togglePlayDialogue() {
-    if (isPlaying) { stopAllPlayback(); return; }
-    if (parsedLines.length === 0) parseDialogue();
-    if (parsedLines.length === 0) return;
-
-    shouldStop = false;
-    isPlaying = true;
-    document.getElementById('btnPlayAll').innerHTML = '⏹️ إيقاف';
-    document.getElementById('readingStatusNotice').textContent = 'جاري القراءة...';
-
-    const pauseMs = parseInt(document.getElementById('pauseDurationSelect').value, 10) || 800;
-
-    for (let i = 0; i < parsedLines.length; i++) {
-      if (shouldStop) break;
-      const item = parsedLines[i];
-      const conf = detectedSpeakers[item.speaker];
-      if (conf && conf.skip && item.speaker === 'Title/Narrator') continue;
-
-      await speakLinePromise(i);
-      if (shouldStop) break;
-      await new Promise(r => setTimeout(r, pauseMs));
-    }
-
-    stopAllPlayback();
-  }
-
-  function stopAllPlayback() {
-    shouldStop = true;
-    isPlaying = false;
-    if (currentAudioPlayer) currentAudioPlayer.pause();
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-    document.querySelectorAll('.line-bubble').forEach(b => b.classList.remove('active-reading'));
-    document.getElementById('btnPlayAll').innerHTML = '▶️ تشغيل الحوار';
-    document.getElementById('readingStatusNotice').textContent = 'جاهز للتشغيل';
-  }
-
-  // دمج مقاطع الـ WAV السحابية
-  async function audioBufferToWavBlob(audioBuffer) {
-    const numOfChan = audioBuffer.numberOfChannels;
-    const length = audioBuffer.length * numOfChan * 2 + 44;
-    const out = new DataView(new ArrayBuffer(length));
-    const channels = [];
-    let sampleRate = audioBuffer.sampleRate;
-    let offset = 0;
-    let pos = 0;
-
-    function setUint16(data) { out.setUint16(pos, data, true); pos += 2; }
-    function setUint32(data) { out.setUint32(pos, data, true); pos += 4; }
-
-    setUint32(0x46464952);
-    setUint32(length - 8);
-    setUint32(0x45564157);
-    setUint32(0x20746d66);
-    setUint32(16);
-    setUint16(1);
-    setUint16(numOfChan);
-    setUint32(sampleRate);
-    setUint32(sampleRate * 2 * numOfChan);
-    setUint16(numOfChan * 2);
-    setUint16(16);
-    setUint32(0x61746164);
-    setUint32(length - pos - 4);
-
-    for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
-      channels.push(audioBuffer.getChannelData(i));
-    }
-
-    while (pos < length) {
-      for (let i = 0; i < numOfChan; i++) {
-        let sample = Math.max(-1, Math.min(1, channels[i][offset]));
-        sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
-        out.setInt16(pos, sample, true);
-        pos += 2;
-      }
-      offset++;
-    }
-    return new Blob([out.buffer], { type: 'audio/wav' });
-  }
-
-  // 1. تصدير مباشر للأصوات السحابية (WAV نظيف وفوري)
-  async function exportCloudDialogueAudio() {
-    if (parsedLines.length === 0) parseDialogue();
-    if (parsedLines.length === 0) return;
-
-    const btn = document.getElementById('btnExportCloud');
-    const orig = btn.innerHTML;
-    btn.innerHTML = '⏳ جاري التجميع والتحميل...';
-    btn.disabled = true;
-
-    try {
-      const speed = parseFloat(document.getElementById('globalSpeedSelect').value) || 0.85;
-      const pauseDuration = (parseInt(document.getElementById('pauseDurationSelect').value, 10) || 800) / 1000;
-      
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const lineAudioBuffers = [];
-
-      for (let i = 0; i < parsedLines.length; i++) {
-        const item = parsedLines[i];
-        const conf = detectedSpeakers[item.speaker];
-        if (conf && conf.skip && item.speaker === 'Title/Narrator') continue;
-
-        if (conf && conf.voiceType !== 'local') {
-          try {
-            const blob = await fetchCloudAudioBlob(conf, item.text, speed);
-            const arrayBuffer = await blob.arrayBuffer();
-            const decoded = await audioCtx.decodeAudioData(arrayBuffer);
-            lineAudioBuffers.push(decoded);
-          } catch (err) {
-            console.warn(`تعذر جلب صوت السحابة للسطر ${i}`);
+          // لا يتجاوز 3 كلمات ومعه كلام فعلي
+          if (possibleSpeaker.split(/\s+/).length <= 3 && speechContent.length > 0) {
+            currentFoundSpeakers.add(possibleSpeaker);
+            parsedLines.push({
+              type: 'dialogue',
+              speaker: possibleSpeaker,
+              text: speechContent,
+              raw: trimmed
+            });
+            return;
           }
         }
+
+        // أي سطر آخر يحال إلى الراوي
+        parsedLines.push({
+          type: 'narrator',
+          speaker: 'الراوي / العنوان',
+          text: trimmed,
+          raw: trimmed
+        });
+      });
+
+      detectedSpeakers = currentFoundSpeakers;
+      detectedBadge.textContent = `تم التعرف على: ${detectedSpeakers.size} متحدثين`;
+      
+      renderSpeakerCards();
+    }
+
+    // --- رسم كروت المتحدثين والراوي ---
+    function renderSpeakerCards() {
+      // الحفاظ على الإعدادات السابقة وتأمين الإعداد للراوي
+      if (!speakerConfigs['__narrator__']) {
+        speakerConfigs['__narrator__'] = {
+          enabled: true,
+          voiceURI: '',
+          speed: 1.0
+        };
       }
 
-      if (lineAudioBuffers.length > 0) {
-        let totalLength = 0;
-        lineAudioBuffers.forEach((buf, i) => {
-          totalLength += buf.length;
-          if (i < lineAudioBuffers.length - 1) {
-            totalLength += Math.floor(pauseDuration * buf.sampleRate);
-          }
+      // تجهيز إعدادات المتحدثين الجدد
+      detectedSpeakers.forEach(spk => {
+        if (!speakerConfigs[spk]) {
+          speakerConfigs[spk] = {
+            voiceURI: '',
+            speed: 1.0
+          };
+        }
+      });
+
+      // تنظيف الحاوية
+      speakersContainer.innerHTML = '';
+
+      // 1. كرت الراوي / العناوين والفقرات الوصفية
+      const narratorConfig = speakerConfigs['__narrator__'];
+      const narratorCard = document.createElement('div');
+      narratorCard.className = "bg-emerald-900/70 border border-emerald-600/50 rounded-xl p-4 glow-box space-y-3 relative overflow-hidden";
+      narratorCard.innerHTML = `
+        <div class="flex items-center justify-between pb-2 border-b border-emerald-800">
+          <div class="flex items-center gap-2">
+            <span class="bg-emerald-700/80 text-emerald-200 text-xs px-2.5 py-1 rounded-md font-bold">
+              <i class="fa-solid fa-book-open ml-1"></i> الراوي / العناوين
+            </span>
+          </div>
+          <label class="flex items-center gap-2 cursor-pointer text-xs text-emerald-300 font-bold select-none">
+            <input type="checkbox" id="narratorToggle" class="accent-emerald-400 w-4 h-4 cursor-pointer" ${narratorConfig.enabled ? 'checked' : ''}>
+            <span>نطق الفقرات</span>
+          </label>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs text-emerald-300 font-semibold block">الصوت الأصلي المختار:</label>
+          <select id="narratorVoice" class="w-full bg-emerald-950 border border-emerald-700/80 rounded-lg p-2 text-xs text-emerald-100 outline-none focus:border-emerald-400">
+            ${buildVoiceOptions(narratorConfig.voiceURI)}
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs text-emerald-300">
+            <span>السرعة الخاصة:</span>
+            <span id="narratorSpeedVal" class="font-mono text-emerald-400 font-bold">${narratorConfig.speed}x</span>
+          </div>
+          <input type="range" id="narratorSpeed" min="0.5" max="1.5" step="0.05" value="${narratorConfig.speed}" class="w-full">
+        </div>
+
+        <button id="btnSampleNarrator" class="w-full bg-emerald-800/80 hover:bg-emerald-700 text-emerald-200 hover:text-white py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 border border-emerald-600/30">
+          <i class="fa-solid fa-volume-high"></i>
+          سماع عينة
+        </button>
+      `;
+      speakersContainer.appendChild(narratorCard);
+
+      // ربط أحداث كرت الراوي
+      narratorCard.querySelector('#narratorToggle').addEventListener('change', (e) => {
+        narratorConfig.enabled = e.target.checked;
+      });
+      narratorCard.querySelector('#narratorVoice').addEventListener('change', (e) => {
+        narratorConfig.voiceURI = e.target.value;
+      });
+      const narratorSpeedSlider = narratorCard.querySelector('#narratorSpeed');
+      const narratorSpeedValText = narratorCard.querySelector('#narratorSpeedVal');
+      narratorSpeedSlider.addEventListener('input', (e) => {
+        narratorConfig.speed = parseFloat(e.target.value);
+        narratorSpeedValText.textContent = `${narratorConfig.speed}x`;
+      });
+      narratorCard.querySelector('#btnSampleNarrator').addEventListener('click', () => {
+        const sampleLine = parsedLines.find(l => l.type === 'narrator');
+        speakSingleLine(sampleLine ? sampleLine.text : 'هذا نموذج صوتي لنطق العناوين والفقرات الوصفية', narratorConfig);
+      });
+
+      // 2. توليد كروت المتحدثين المكتشفين
+      let speakerIndex = 1;
+      detectedSpeakers.forEach(spk => {
+        const config = speakerConfigs[spk];
+        const card = document.createElement('div');
+        card.className = "bg-emerald-900/50 border border-emerald-700/40 rounded-xl p-4 glow-box space-y-3";
+        card.innerHTML = `
+          <div class="flex items-center justify-between pb-2 border-b border-emerald-800">
+            <span class="bg-emerald-800 text-emerald-200 text-xs px-3 py-1 rounded-md font-bold font-mono">
+              <i class="fa-solid fa-user ml-1 text-emerald-400"></i>
+              متحدث ${speakerIndex++}: ${escapeHtml(spk)}
+            </span>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs text-emerald-300 font-semibold block">الصوت المخصص (الاسم الأصلي):</label>
+            <select class="speaker-voice w-full bg-emerald-950 border border-emerald-700/80 rounded-lg p-2 text-xs text-emerald-100 outline-none focus:border-emerald-400">
+              ${buildVoiceOptions(config.voiceURI)}
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs text-emerald-300">
+              <span>السرعة:</span>
+              <span class="speaker-speed-val font-mono text-emerald-400 font-bold">${config.speed}x</span>
+            </div>
+            <input type="range" class="speaker-speed w-full" min="0.5" max="1.5" step="0.05" value="${config.speed}">
+          </div>
+
+          <!-- زر واحد فقط لمعاينة العينة -->
+          <button class="btn-sample-speaker w-full bg-emerald-800/80 hover:bg-emerald-700 text-emerald-200 hover:text-white py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 border border-emerald-600/30">
+            <i class="fa-solid fa-volume-high"></i>
+            سماع عينة من النص
+          </button>
+        `;
+
+        // ربط الأحداث
+        const voiceSelect = card.querySelector('.speaker-voice');
+        voiceSelect.addEventListener('change', (e) => {
+          config.voiceURI = e.target.value;
         });
 
-        const mergedBuffer = audioCtx.createBuffer(1, totalLength, audioCtx.sampleRate);
-        const channelData = mergedBuffer.getChannelData(0);
-        let currentOffset = 0;
+        const speedSlider = card.querySelector('.speaker-speed');
+        const speedValText = card.querySelector('.speaker-speed-val');
+        speedSlider.addEventListener('input', (e) => {
+          config.speed = parseFloat(e.target.value);
+          speedValText.textContent = `${config.speed}x`;
+        });
 
-        for (let i = 0; i < lineAudioBuffers.length; i++) {
-          const buf = lineAudioBuffers[i];
-          const srcData = buf.getChannelData(0);
-          channelData.set(srcData, currentOffset);
-          currentOffset += buf.length;
-          if (i < lineAudioBuffers.length - 1) {
-            currentOffset += Math.floor(pauseDuration * audioCtx.sampleRate);
+        const btnSample = card.querySelector('.btn-sample-speaker');
+        btnSample.addEventListener('click', () => {
+          const sampleDialogue = parsedLines.find(l => l.type === 'dialogue' && l.speaker === spk);
+          const sampleText = sampleDialogue ? sampleDialogue.text : `Hello, this is ${spk} speaking.`;
+          speakSingleLine(sampleText, config);
+        });
+
+        speakersContainer.appendChild(card);
+      });
+    }
+
+    // بناء خيارات الأصوات مع الحفاظ على أسمائها الأصلية وبدون أي تعديل
+    function buildVoiceOptions(selectedURI) {
+      if (!systemVoices || systemVoices.length === 0) {
+        return `<option value="">جاري تحميل أصوات النظام...</option>`;
+      }
+
+      // فرز الأصوات بحيث تظهر الإنجليزية أولاً ثم بقية اللغات مع إبراز الأصوات الطبيعية
+      const sorted = [...systemVoices].sort((a, b) => {
+        const aNat = a.name.includes('Natural') || a.name.includes('Online');
+        const bNat = b.name.includes('Natural') || b.name.includes('Online');
+        if (aNat && !bNat) return -1;
+        if (!aNat && bNat) return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      return sorted.map(v => {
+        const isSelected = (v.voiceURI === selectedURI) ? 'selected' : '';
+        return `<option value="${escapeHtml(v.voiceURI)}" ${isSelected}>${escapeHtml(v.name)} (${escapeHtml(v.lang)})</option>`;
+      }).join('');
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+
+    // --- منطق قراءة عينة مفردة ---
+    function speakSingleLine(text, config) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      const chosenVoice = systemVoices.find(v => v.voiceURI === config.voiceURI);
+      if (chosenVoice) utterance.voice = chosenVoice;
+
+      const globalSpeed = parseFloat(globalSpeedInput.value) || 1.0;
+      utterance.rate = (config.speed || 1.0) * globalSpeed;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // --- منطق تشغيل المحادثة الكاملة مع الوقفات ---
+    async function playFullConversation() {
+      if (isPlaying) return;
+      if (!parsedLines || parsedLines.length === 0) {
+        parseScript();
+      }
+      if (parsedLines.length === 0) return;
+
+      isPlaying = true;
+      stopRequested = false;
+      btnPlayAll.classList.add('opacity-50', 'pointer-events-none');
+      statusBox.classList.remove('hidden');
+
+      const globalSpeed = parseFloat(globalSpeedInput.value) || 1.0;
+      const pauseDuration = (parseFloat(globalPauseInput.value) || 0.6) * 1000;
+
+      for (let i = 0; i < parsedLines.length; i++) {
+        if (stopRequested) break;
+
+        const line = parsedLines[i];
+        
+        // إذا كان راوي وهو معطل، نتخطى السطر فوراً
+        if (line.type === 'narrator') {
+          const narratorConfig = speakerConfigs['__narrator__'];
+          if (!narratorConfig.enabled) {
+            continue;
           }
         }
 
-        const wavBlob = await audioBufferToWavBlob(mergedBuffer);
-        const url = URL.createObjectURL(wavBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `dialogue_cloud_${Date.now()}.wav`;
-        a.click();
-        URL.revokeObjectURL(url);
-      } else {
-        alert('لم يتم العثور على أسطر بأصوات سحابية. إذا كنت تستخدم أصوات المتصفح، استخدم زر "🔴 تسجيل وتحميل أصوات المتصفح".');
+        // تحديد إعدادات المتحدث
+        const config = (line.type === 'narrator') 
+          ? speakerConfigs['__narrator__'] 
+          : (speakerConfigs[line.speaker] || { speed: 1.0 });
+
+        // تحديث شريط الحالة المباشر
+        statusSpeaker.textContent = line.type === 'narrator' ? 'الراوي / العنوان' : `المتحدث: ${line.speaker}`;
+        statusText.textContent = line.text;
+
+        // قراءة السطر الصوتي دون نطق اسم الشخصية
+        await new Promise((resolve) => {
+          if (stopRequested) return resolve();
+
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(line.text);
+          const chosenVoice = systemVoices.find(v => v.voiceURI === config.voiceURI);
+          if (chosenVoice) utterance.voice = chosenVoice;
+          
+          utterance.rate = (config.speed || 1.0) * globalSpeed;
+
+          utterance.onend = () => resolve();
+          utterance.onerror = () => resolve();
+
+          window.speechSynthesis.speak(utterance);
+        });
+
+        // وقفة الصمت بين الجمل
+        if (!stopRequested && i < parsedLines.length - 1) {
+          await new Promise(r => setTimeout(r, pauseDuration));
+        }
       }
-    } catch (e) {
-      console.error(e);
-      alert('حدث خطأ أثناء تجميع الصوت السحابي.');
-    } finally {
-      btn.innerHTML = orig;
-      btn.disabled = false;
+
+      stopPlayback();
     }
-  }
 
-  // 2. تسجيل وحفظ أصوات المتصفح المحلية المجانية
-  async function recordAndExportLocalAudio() {
-    if (parsedLines.length === 0) parseDialogue();
-    const btn = document.getElementById('btnRecordLocal');
-    const orig = btn.innerHTML;
+    function stopPlayback() {
+      stopRequested = true;
+      isPlaying = false;
+      window.speechSynthesis.cancel();
+      btnPlayAll.classList.remove('opacity-50', 'pointer-events-none');
+      statusBox.classList.add('hidden');
+    }
 
-    try {
-      alert('تنبيه: في النافذة التالية، اختر نافذة المتصفح الحالية وتأكد من تفعيل خيار (Share tab audio / مشاركة صوت التبويب) لبدء التسجيل التلقائي.');
-      
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-        audio: { autoGainControl: false, echoCancellation: false, noiseSuppression: false }
-      });
-      stream.getVideoTracks().forEach(t => t.stop());
+    // جلب مقطع MP3 حقيقي ونقي من سيرفر Edge
+    async function fetchEdgeAudioBuffer(text, voiceName, speedRatio) {
+      let voiceId = 'en-US-GuyNeural';
+      if (voiceName) {
+        if (/jenny/i.test(voiceName)) voiceId = 'en-US-JennyNeural';
+        else if (/aria/i.test(voiceName)) voiceId = 'en-US-AriaNeural';
+        else if (/ryan/i.test(voiceName)) voiceId = 'en-GB-RyanNeural';
+        else if (/sonia/i.test(voiceName)) voiceId = 'en-GB-SoniaNeural';
+        else if (/hamed/i.test(voiceName)) voiceId = 'ar-SA-HamedNeural';
+        else if (/zariyah/i.test(voiceName)) voiceId = 'ar-SA-ZariyahNeural';
+        else if (/guy/i.test(voiceName)) voiceId = 'en-US-GuyNeural';
+      }
 
-      btn.innerHTML = '🔴 جاري التسجيل والحفظ...';
-      btn.disabled = true;
+      const url = `https://api.streamelements.com/kappa/v2/speech?voice=${voiceId}&text=${encodeURIComponent(text)}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('فشل التوليد من السيرفر');
+      return await res.arrayBuffer();
+    }
 
-      const mediaRecorder = new MediaRecorder(stream);
-      const chunks = [];
-      mediaRecorder.ondataavailable = e => chunks.push(e.data);
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+    // --- توليد الصوت النقي MP3 الصافي وتنزيله مباشرة ---
+    async function handleDirectAudioDownload() {
+      if (parsedLines.length === 0) parseScript();
+      if (parsedLines.length === 0) {
+        showExportNotice('يرجى كتابة نص أولاً.');
+        return;
+      }
+
+      showExportNotice('جاري تجميع وتوليد ملف MP3 نقي من السيرفر...');
+      btnDownloadAudio.classList.add('opacity-50', 'pointer-events-none');
+
+      try {
+        const audioChunks = [];
+        const baseSpeed = parseFloat(globalSpeedInput.value) || 1.0;
+        const pauseDuration = parseFloat(globalPauseInput.value) || 0.6;
+        const silenceBytes = new Uint8Array(Math.floor(pauseDuration * 2000));
+
+        for (let i = 0; i < parsedLines.length; i++) {
+          const item = parsedLines[i];
+          if (item.type === 'narrator' && !speakerConfigs['__narrator__']?.enabled) {
+            continue;
+          }
+
+          const config = (item.type === 'narrator')
+            ? speakerConfigs['__narrator__']
+            : (speakerConfigs[item.speaker] || { speed: 1.0, voiceURI: '' });
+
+          showExportNotice(`جاري توليد MP3 للمقطع (${i + 1} من ${parsedLines.length})...`);
+          const buf = await fetchEdgeAudioBuffer(item.text, config.voiceURI, (config.speed || 1.0) * baseSpeed);
+          audioChunks.push(buf);
+
+          if (i < parsedLines.length - 1 && pauseDuration > 0) {
+            audioChunks.push(silenceBytes.buffer);
+          }
+        }
+
+        const mp3Blob = new Blob(audioChunks, { type: 'audio/mpeg' });
+        const downloadUrl = URL.createObjectURL(mp3Blob);
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `dialogue_local_${Date.now()}.webm`;
+        a.href = downloadUrl;
+        a.download = `listening_studio_${Date.now()}.mp3`;
+        document.body.appendChild(a);
         a.click();
-        stream.getTracks().forEach(t => t.stop());
-        btn.innerHTML = orig;
-        btn.disabled = false;
-      };
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(downloadUrl), 2000);
 
-      mediaRecorder.start();
-      await togglePlayDialogue();
-      await new Promise(r => setTimeout(r, 600));
-      if (mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-    } catch (e) {
-      btn.innerHTML = orig;
-      btn.disabled = false;
+        showExportNotice('✅ تم تنزيل ملف الـ MP3 النقي بنجاح!');
+      } catch (err) {
+        console.error(err);
+        showExportNotice('حدث خطأ أثناء جلب الـ MP3، يرجى التأكد من اتصال الإنترنت.');
+      } finally {
+        btnDownloadAudio.classList.remove('opacity-50', 'pointer-events-none');
+      }
     }
-  }
 
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => parseDialogue(true), 350);
-  });
-</script>
+    // --- التسجيل الاحتياطي WebM بصوت النظام/التبويب بدلاً من المايكروفون ---
+    async function handleWebMRecording() {
+      if (parsedLines.length === 0) parseScript();
+      if (parsedLines.length === 0) return showExportNotice('يرجى كتابة نص أولاً.');
 
+      showExportNotice('اختر (هذه الشاشة/هذا التبويب) مع تفعيل خيار مشاركة صوت النظام...');
+
+      try {
+        // طلب التقاط صوت التبويب/الشاشة الداخلي (بدون مايك خارجي)
+        const displayStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: true
+        });
+
+        const audioTracks = displayStream.getAudioTracks();
+        if (audioTracks.length === 0) {
+          displayStream.getTracks().forEach(t => t.stop());
+          showExportNotice('تنبيه: لم يتم تحديد مشاركة صوت التبويب الداخلي!');
+          return;
+        }
+
+        // عزل الصوت فقط بدون الفيديو
+        const pureAudioStream = new MediaStream(audioTracks);
+        const recorder = new MediaRecorder(pureAudioStream, { mimeType: 'audio/webm' });
+        const recordedChunks = [];
+
+        recorder.ondataavailable = e => {
+          if (e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        recorder.onstop = () => {
+          displayStream.getTracks().forEach(t => t.stop());
+          const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `system_audio_recording_${Date.now()}.webm`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showExportNotice('✅ تم حفظ تسجيل صوت النظام WebM بنجاح!');
+        };
+
+        recorder.start();
+        showExportNotice('جاري التسجيل من صوت النظام الداخلي...');
+        await playFullConversation();
+
+        if (recorder.state === 'recording') {
+          recorder.stop();
+        }
+      } catch (e) {
+        console.warn(e);
+        showExportNotice('تم إلغاء تسجيل الشاشة أو تعذر الوصول لصوت النظام.');
+      }
+    }
+
+    function showExportNotice(msg) {
+      exportStatus.textContent = msg;
+      exportStatus.classList.remove('hidden');
+      setTimeout(() => {
+        exportStatus.classList.add('hidden');
+      }, 5000);
+    }
+
+    // --- ربط الأحداث العامة ---
+    scriptTextArea.addEventListener('input', parseScript);
+    
+    globalSpeedInput.addEventListener('input', (e) => {
+      globalSpeedVal.textContent = `${parseFloat(e.target.value).toFixed(2)}x`;
+    });
+
+    globalPauseInput.addEventListener('input', (e) => {
+      globalPauseVal.textContent = `${parseFloat(e.target.value).toFixed(1)} ثانية`;
+    });
+
+    btnPlayAll.addEventListener('click', playFullConversation);
+    btnStop.addEventListener('click', stopPlayback);
+    btnDownloadAudio.addEventListener('click', handleDirectAudioDownload);
+    btnRecordWebM.addEventListener('click', handleWebMRecording);
+
+    // البدء بالتحليل الأولي
+    window.addEventListener('DOMContentLoaded', () => {
+      parseScript();
+    });
+  </script>
 </body>
 </html>
