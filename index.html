@@ -12,16 +12,15 @@
   <style>
     :root {
       --bg: #0f1013;
-      --card: #18191f;
-      --border: #282a36;
+      --card: #111815;
+      --border: #1c2e26;
       --text: #e6e6ee;
       --muted: #9597a6;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
+      --accent: #059669;
+      --accent-hover: #047857;
       --success: #10b981;
       --danger: #ef4444;
       --warning: #f59e0b;
-      --purple: #8b5cf6;
     }
 
     * {
@@ -49,16 +48,35 @@
     }
 
     .card {
-      background-color: var(--card);
+      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 14px;
+      padding: 18px;
       position: relative;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
     }
 
-    h1 { font-size: 1.35rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
-    h2 { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
-    p.sub { font-size: 0.85rem; color: var(--muted); }
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #34d399;
+      margin-bottom: 4px;
+    }
+    h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #a7f3d0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+      padding-bottom: 6px;
+    }
+    p.sub {
+      font-size: 0.88rem;
+      color: #94a3b8;
+    }
 
     textarea {
       width: 100%;
@@ -73,16 +91,17 @@
       direction: ltr;
       text-align: left;
       line-height: 1.6;
-      font-family: system-ui, -apple-system, sans-serif;
     }
-    textarea:focus { outline: none; border-color: var(--accent); }
+    textarea:focus { outline: none; border-color: #34d399; }
 
     .btn-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
+      gap: 10px;
+      margin-top: 14px;
       align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid rgba(16, 185, 129, 0.12);
     }
 
     button {
@@ -92,29 +111,23 @@
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.15s ease;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
       color: #fff;
+      transition: all 0.2s ease;
     }
 
     .btn-success { background: #059669; }
     .btn-success:hover { background: #047857; }
-    .btn-export { background: #7c3aed; }
-    .btn-export:hover { background: #6d28d9; }
-    .btn-export.processing { background: #4c1d95; animation: pulse 1.5s infinite; }
-    .btn-secondary { background: #262833; color: var(--text); border: 1px solid var(--border); }
-    .btn-secondary:hover { background: #343746; }
-    .btn-settings { background: #1e2029; border: 1px solid var(--border); color: #fff; }
+    .btn-export-cloud { background: #7c3aed; }
+    .btn-export-cloud:hover { background: #6d28d9; }
+    .btn-record-local { background: #d97706; }
+    .btn-record-local:hover { background: #b45309; }
+    .btn-secondary { background: #1c2620; color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: #26382f; }
     .btn-sm { padding: 4px 10px; font-size: 0.8rem; border-radius: 6px; }
-
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
-    }
 
     .speakers-grid {
       display: grid;
@@ -124,7 +137,7 @@
     }
 
     .speaker-card {
-      background: #121318;
+      background: #0e1411;
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 12px;
@@ -143,24 +156,21 @@
       font-weight: 700;
       color: #fff;
       font-size: 1rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
     }
 
     .speaker-controls { display: flex; flex-direction: column; gap: 7px; font-size: 0.85rem; }
     .control-item { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
 
-    select, input[type="password"] {
-      background: #090a0d;
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 5px 8px;
-      border-radius: 6px;
+    select, input[type="text"], input[type="password"] {
+      background: #090e0b;
+      border: 1px solid #1c2e26;
+      color: #e2e8f0;
+      padding: 6px 10px;
+      border-radius: 8px;
       font-size: 0.85rem;
       outline: none;
     }
-    select { max-width: 175px; }
+    select { max-width: 260px; cursor: pointer; }
 
     .dialogue-viewer {
       direction: ltr;
@@ -175,25 +185,23 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      font-family: system-ui, -apple-system, sans-serif;
     }
 
     .line-bubble {
       padding: 10px 14px;
       border-radius: 8px;
-      background: #14151c;
+      background: #111a15;
       border: 1px solid var(--border);
       display: flex;
       gap: 10px;
       align-items: center;
-      transition: 0.2s ease;
+      transition: all 0.2s;
     }
 
     .line-bubble.active-reading {
-      border-color: var(--accent);
-      background: rgba(37, 99, 235, 0.18);
+      border-color: #34d399;
+      background: rgba(16, 185, 129, 0.15);
       transform: scale(1.01);
-      box-shadow: 0 0 12px rgba(37, 99, 235, 0.25);
     }
 
     .line-speaker {
@@ -203,31 +211,44 @@
       padding: 4px 8px;
       border-radius: 6px;
       text-align: center;
-      user-select: none;
     }
 
     .line-text { font-size: 1.05rem; line-height: 1.5; color: #e4e4ed; flex: 1; }
-    .line-actions { display: flex; align-items: center; gap: 6px; }
-
     .line-play-btn {
-      background: #242633;
+      background: #1a2921;
       border: 1px solid var(--border);
       border-radius: 6px;
       cursor: pointer;
       color: var(--muted);
-      font-size: 0.9rem;
       padding: 5px 10px;
     }
-    .line-play-btn:hover { color: #fff; border-color: var(--accent); }
+    .line-play-btn:hover { color: #fff; border-color: #34d399; }
 
-    .player-card {
+    /* نافذة الإعدادات المنبثقة */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
       display: none;
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 8px;
-      background: #121318;
-      border: 1px solid var(--border);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
     }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #111815;
+      border: 1px solid #1c382b;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 520px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .modal-box label { font-size: 0.85rem; color: #a7f3d0; margin-bottom: 2px; display: block; }
+    .modal-box input { width: 100%; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -238,27 +259,27 @@
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
       <div>
         <h1>استوديو المحادثات الصوتية المتعددة</h1>
-        <p class="sub">تخصيص الأصوات والمشاعر، تجربة فورية، وتحميل ملف صوتي شغال ونقي 100% بدون أخطاء شبكة.</p>
+        <p class="sub">تخصيص الأصوات (محلياً أو سحابياً)، تجربة فورية، وتحميل مباشر بنقاء كامل وبسرعة موزونة.</p>
       </div>
       
       <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 0.85rem;">
+        <button class="btn-secondary btn-sm" onclick="openSettingsModal()">⚙️ إعدادات السحاب (API)</button>
         <div style="display: flex; align-items: center; gap: 4px;">
-          <label>سرعة الحوار ككل:</label>
+          <label>السرعة:</label>
           <select id="globalSpeedSelect">
-            <option value="0.65">🐢 بطيء جداً (0.65x)</option>
-            <option value="0.8" selected>🚶 بطيء وتدريبي (0.80x)</option>
-            <option value="1.0">⚖️ سرعة عادية (1.0x)</option>
-            <option value="1.2">🚀 سريع للطلاقة (1.20x)</option>
+            <option value="0.7">🐢 بطيء جداً (0.7x)</option>
+            <option value="0.85" selected>🚶 تدريبي (0.85x)</option>
+            <option value="1.0">⚖️ طبيعي (1.0x)</option>
+            <option value="1.15">🚀 سريع (1.15x)</option>
           </select>
         </div>
 
         <div style="display: flex; align-items: center; gap: 4px;">
-          <label>الوقفة بين المتحدثين:</label>
+          <label>الوقفة:</label>
           <select id="pauseDurationSelect">
-            <option value="400">0.4 ثانية (سريعة)</option>
-            <option value="800" selected>0.8 ثانية (طبيعية ومثالية)</option>
-            <option value="1200">1.2 ثانية (مريحة للطلاب)</option>
-            <option value="1800">1.8 ثانية (بطيئة وتدريبية)</option>
+            <option value="400">0.4 ثانية</option>
+            <option value="800" selected>0.8 ثانية</option>
+            <option value="1200">1.2 ثانية</option>
           </select>
         </div>
       </div>
@@ -266,7 +287,7 @@
   </div>
 
   <div class="card">
-    <h2>1. نص المحادثة (تحديث تلقائي للشخصيات والعنوان بمجرد التعديل أو اللصق):</h2>
+    <h2>1. نص المحادثة:</h2>
     <textarea id="dialogueInput" oninput="handleTextInputChange()" placeholder="ألصق أو اكتب الحوار هنا...">Schools Are Great Fun!
 Ali: Good morning Sarah, are you ready for the presentation today?
 Sarah: Good morning Ali! Yes, I prepared all the slides yesterday.
@@ -274,40 +295,59 @@ Saleh: Hey guys! Can I practice presenting with you?
 Sarah: Of course Saleh, let's start reading together!</textarea>
     
     <div class="btn-row">
-      <button id="btnPlayAll" class="btn-success" onclick="togglePlayDialogue()">▶️ تشغيل الحوار المباشر</button>
-
-      <button id="btnExportDirect" class="btn-export" onclick="recordAndExportDirect()">
-        💾 تحميل المحادثة كاملة كملف صوتي (WAV نقي)
-      </button>
-
+      <button id="btnPlayAll" class="btn-success" onclick="togglePlayDialogue()">▶️ تشغيل الحوار</button>
+      <button id="btnExportCloud" class="btn-export-cloud" onclick="exportCloudDialogueAudio()">💾 تحميل الأصوات السحابية (WAV مباشر)</button>
+      <button id="btnRecordLocal" class="btn-record-local" onclick="recordAndExportLocalAudio()">🔴 تسجيل وتحميل أصوات المتصفح (مجاني)</button>
       <button class="btn-secondary" onclick="stopAllPlayback()">⏹️ إيقاف</button>
-    </div>
-
-    <div id="playerBox" class="player-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">🎧 استمع للملف المحفوظ:</span>
-        <span id="exportStatusNotice" style="font-size: 0.8rem; color: var(--success);">تم تنزيل الصوت بنجاح ويعمل على كل الأجهزة ✔️</span>
-      </div>
-      <audio id="audioPreview" controls style="width: 100%; height: 36px;"></audio>
     </div>
   </div>
 
   <div class="card" id="speakersPanel">
-    <h2>2. تخصيص المتحدثين وزر تجربة النبرة والمشاعر:</h2>
+    <h2>2. تخصيص المتحدثين ونوع الصوت:</h2>
     <div id="speakersContainer" class="speakers-grid"></div>
   </div>
 
   <div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-      <h2>3. شاشة العرض والمتابعة الصفية:</h2>
+      <h2>3. المتابعة الصفية المباشرة:</h2>
       <span id="readingStatusNotice" style="font-size: 0.85rem; color: var(--muted);">جاهز للتشغيل</span>
     </div>
     <div id="dialogueViewer" class="dialogue-viewer"></div>
   </div>
 
   <footer style="text-align: center; padding: 14px 0 6px; font-size: 0.9rem; color: var(--muted);">
-    Built with <span style="color: #f59e0b;">⚡</span> By: <span style="color: #60a5fa; font-weight: 700;">Naif</span>
+    Built with <span style="color: #f59e0b;">⚡</span> By: <span style="color: #34d399; font-weight: 700;">Naif</span>
   </footer>
+</div>
+
+<!-- نافذة إعدادات المفاتيح السحابية -->
+<div id="settingsModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3 style="color:#34d399;">⚙️ إعدادات المفاتيح السحابية</h3>
+    <p style="font-size:0.8rem; color:#94a3b8;">المفاتيح تُحفظ محلياً على متصفحك فقط. اترك الحقل فارغاً لاستخدام أصوات المتصفح المجانية بدون إنترنت.</p>
+    
+    <div>
+      <label>Microsoft Azure TTS Key:</label>
+      <input type="password" id="azureKeyInput" placeholder="أدخل مفتاح Azure...">
+      <label style="margin-top:4px;">Azure Region (المنطقة):</label>
+      <input type="text" id="azureRegionInput" placeholder="مثال: eastus">
+    </div>
+
+    <div>
+      <label>Google Cloud TTS API Key:</label>
+      <input type="password" id="googleKeyInput" placeholder="أدخل مفتاح Google Cloud...">
+    </div>
+
+    <div>
+      <label>ElevenLabs API Key:</label>
+      <input type="password" id="elevenKeyInput" placeholder="أدخل مفتاح ElevenLabs...">
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+      <button class="btn-secondary" onclick="closeSettingsModal()">إلغاء</button>
+      <button class="btn-success" onclick="saveCloudSettings()">حفظ الإعدادات</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -316,36 +356,95 @@ Sarah: Of course Saleh, let's start reading together!</textarea>
   let detectedSpeakers = {};
   let isPlaying = false;
   let shouldStop = false;
+  let currentAudioPlayer = null;
   let textDebounceTimer = null;
+
+  const cloudVoicesCatalog = {
+    azure: [
+      { id: 'en-US-JennyNeural', name: 'Jenny', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'en-US-GuyNeural', name: 'Guy', gender: 'رجل', country: 'أمريكا' },
+      { id: 'en-US-AriaNeural', name: 'Aria', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'en-US-DavisNeural', name: 'Davis', gender: 'رجل', country: 'أمريكا' },
+      { id: 'en-US-AmberNeural', name: 'Amber', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'en-US-JasonNeural', name: 'Jason', gender: 'رجل', country: 'أمريكا' },
+      { id: 'en-US-SaraNeural', name: 'Sara', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'en-US-TonyNeural', name: 'Tony', gender: 'رجل', country: 'أمريكا' },
+      { id: 'en-GB-RyanNeural', name: 'Ryan', gender: 'رجل', country: 'بريطانيا' },
+      { id: 'en-GB-SoniaNeural', name: 'Sonia', gender: 'امرأة', country: 'بريطانيا' },
+      { id: 'en-GB-AlfieNeural', name: 'Alfie', gender: 'رجل', country: 'بريطانيا' },
+      { id: 'en-GB-LibbyNeural', name: 'Libby', gender: 'امرأة', country: 'بريطانيا' },
+      { id: 'en-GB-OliverNeural', name: 'Oliver', gender: 'رجل', country: 'بريطانيا' },
+      { id: 'en-GB-MaisieNeural', name: 'Maisie', gender: 'امرأة', country: 'بريطانيا' },
+      { id: 'en-GB-BellaNeural', name: 'Bella', gender: 'امرأة', country: 'بريطانيا' }
+    ],
+    google: [
+      { id: 'en-US-Journey-F', name: 'Journey-F', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'en-US-Journey-D', name: 'Journey-D', gender: 'رجل', country: 'أمريكا' },
+      { id: 'en-US-Neural2-C', name: 'Neural-C', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'en-US-Neural2-D', name: 'Neural-D', gender: 'رجل', country: 'أمريكا' },
+      { id: 'en-US-Neural2-E', name: 'Neural-E', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'en-US-Neural2-I', name: 'Neural-I', gender: 'رجل', country: 'أمريكا' },
+      { id: 'en-US-Studio-O', name: 'Studio-O', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'en-US-Studio-Q', name: 'Studio-Q', gender: 'رجل', country: 'أمريكا' },
+      { id: 'en-GB-Neural2-A', name: 'Neural-A', gender: 'امرأة', country: 'بريطانيا' },
+      { id: 'en-GB-Neural2-B', name: 'Neural-B', gender: 'رجل', country: 'بريطانيا' },
+      { id: 'en-GB-Neural2-C', name: 'Neural-C', gender: 'امرأة', country: 'بريطانيا' },
+      { id: 'en-GB-Neural2-D', name: 'Neural-D', gender: 'رجل', country: 'بريطانيا' },
+      { id: 'en-GB-Neural2-F', name: 'Neural-F', gender: 'امرأة', country: 'بريطانيا' },
+      { id: 'en-GB-Studio-B', name: 'Studio-B', gender: 'رجل', country: 'بريطانيا' },
+      { id: 'en-GB-Studio-C', name: 'Studio-C', gender: 'امرأة', country: 'بريطانيا' }
+    ],
+    eleven: [
+      { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'ErXwobaYiN019PkySvjV', name: 'Antoni', gender: 'رجل', country: 'أمريكا' },
+      { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', gender: 'رجل', country: 'أمريكا' },
+      { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', gender: 'رجل', country: 'أمريكا' },
+      { id: 'piTKgcLEGmPE4e6mEKli', name: 'Nicole', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'VR6AewLTigWG4xSOukaG', name: 'Arnold', gender: 'رجل', country: 'أمريكا' },
+      { id: 'oWAxZDx7w5VEj9dCyTzz', name: 'Grace', gender: 'امرأة', country: 'أمريكا' },
+      { id: 'JBFqnCBsd6RMkjVDRZzb', name: 'George', gender: 'رجل', country: 'بريطانيا' },
+      { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'Alice', gender: 'امرأة', country: 'بريطانيا' },
+      { id: 'XB0fDUnXU5powFXDhCwa', name: 'Charlotte', gender: 'امرأة', country: 'بريطانيا' },
+      { id: 'N2lVS1w4EtoT3dr4eOWO', name: 'Callum', gender: 'رجل', country: 'بريطانيا' },
+      { id: 'onwK4e9ZLuTAKqWW03F9', name: 'Daniel', gender: 'رجل', country: 'بريطانيا' },
+      { id: 'jsCqWAovK2LkecY7zXl4', name: 'Freya', gender: 'امرأة', country: 'بريطانيا' },
+      { id: 'bIHbv24MWmeRgasZH58o', name: 'Will', gender: 'رجل', country: 'بريطانيا' }
+    ]
+  };
 
   const colorPalette = [
     { bg: 'rgba(37, 99, 235, 0.22)', border: '#3b82f6', text: '#93c5fd' },
     { bg: 'rgba(139, 92, 246, 0.22)', border: '#8b5cf6', text: '#c4b5fd' },
     { bg: 'rgba(16, 185, 129, 0.22)', border: '#10b981', text: '#6ee7b7' },
-    { bg: 'rgba(245, 158, 11, 0.22)', border: '#f59e0b', text: '#fde68a' },
-    { bg: 'rgba(236, 72, 153, 0.22)', border: '#ec4899', text: '#fbcfe8' },
-    { bg: 'rgba(6, 182, 212, 0.22)', border: '#06b6d4', text: '#67e8f9' }
+    { bg: 'rgba(245, 158, 11, 0.22)', border: '#f59e0b', text: '#fde68a' }
   ];
 
-  const moodPresets = {
-    normal:  { rateMul: 1.0, pitch: 1.0, label: "😐 طبيعي (Normal)", preview: "Hello! This is my natural speaking voice." },
-    excited: { rateMul: 1.15, pitch: 1.25, label: "😃 متحمس / سعيد (Excited)", preview: "Hello! I am very excited and happy to see you all today!" },
-    angry:   { rateMul: 1.1, pitch: 0.85, label: "😠 غاضب / حاد (Angry)", preview: "Listen carefully! I am really upset and angry about this!" },
-    sad:     { rateMul: 0.85, pitch: 0.8, label: "😔 حزين / محبط (Sad)", preview: "Hello... I am feeling a bit tired and sad today..." },
-    calm:    { rateMul: 0.88, pitch: 1.05, label: "🤫 هادئ / مسترخي (Calm)", preview: "Hello. Take a deep breath and let us begin calmly." }
-  };
+  function openSettingsModal() {
+    document.getElementById('azureKeyInput').value = localStorage.getItem('tts_azure_key') || '';
+    document.getElementById('azureRegionInput').value = localStorage.getItem('tts_azure_region') || 'eastus';
+    document.getElementById('googleKeyInput').value = localStorage.getItem('tts_google_key') || '';
+    document.getElementById('elevenKeyInput').value = localStorage.getItem('tts_eleven_key') || '';
+    document.getElementById('settingsModal').classList.add('open');
+  }
+
+  function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.remove('open');
+  }
+
+  function saveCloudSettings() {
+    localStorage.setItem('tts_azure_key', document.getElementById('azureKeyInput').value.trim());
+    localStorage.setItem('tts_azure_region', document.getElementById('azureRegionInput').value.trim() || 'eastus');
+    localStorage.setItem('tts_google_key', document.getElementById('googleKeyInput').value.trim());
+    localStorage.setItem('tts_eleven_key', document.getElementById('elevenKeyInput').value.trim());
+    closeSettingsModal();
+    renderSpeakersConfig();
+    alert('تم حفظ إعدادات المفاتيح بنجاح.');
+  }
 
   function populateVoices() {
     if (!('speechSynthesis' in window)) return;
-    const all = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
-    
-    all.sort((a, b) => {
-      const aNat = a.name.includes('Natural') || a.name.includes('Online');
-      const bNat = b.name.includes('Natural') || b.name.includes('Online');
-      return (bNat ? 1 : 0) - (aNat ? 1 : 0);
-    });
-
-    availableVoices = all;
+    availableVoices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
     renderSpeakersConfig();
   }
 
@@ -356,20 +455,13 @@ Sarah: Of course Saleh, let's start reading together!</textarea>
 
   function handleTextInputChange() {
     clearTimeout(textDebounceTimer);
-    textDebounceTimer = setTimeout(() => {
-      parseDialogue(true);
-    }, 350);
+    textDebounceTimer = setTimeout(() => parseDialogue(true), 350);
   }
 
   function parseDialogue(isAuto = false) {
     if (!isAuto) stopAllPlayback();
-
     const rawText = document.getElementById('dialogueInput').value.trim();
-    if (!rawText) {
-      document.getElementById('dialogueViewer').innerHTML = '<div style="color:var(--muted); text-align:center; margin-top:40px;">ألصق النص للبدء...</div>';
-      document.getElementById('speakersContainer').innerHTML = '';
-      return;
-    }
+    if (!rawText) return;
 
     const rawLines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
     parsedLines = [];
@@ -381,38 +473,23 @@ Sarah: Of course Saleh, let's start reading together!</textarea>
         const name = line.substring(0, colonIdx).trim();
         const text = line.substring(colonIdx + 1).trim();
         if (text) {
-          parsedLines.push({ index, speaker: name, text, lineMood: 'default' });
+          parsedLines.push({ index, speaker: name, text });
           if (!currentFoundSpeakers.includes(name)) currentFoundSpeakers.push(name);
         }
       } else {
-        parsedLines.push({ index, speaker: 'Title/Narrator', text: line, lineMood: 'default' });
+        parsedLines.push({ index, speaker: 'Title/Narrator', text: line });
         if (!currentFoundSpeakers.includes('Title/Narrator')) currentFoundSpeakers.push('Title/Narrator');
       }
     });
 
     const updatedSpeakers = {};
     currentFoundSpeakers.forEach((name, i) => {
-      if (detectedSpeakers[name]) {
-        updatedSpeakers[name] = detectedSpeakers[name];
-      } else {
-        const isFemale = /sarah|nour|mary|emma|jane|linda|girl|woman/i.test(name);
-        let defaultVoiceIdx = 0;
-        
-        if (isFemale) {
-          const fIndex = availableVoices.findIndex(v => /female|zira|samantha|jenny|aria|sonia/i.test(v.name));
-          if (fIndex !== -1) defaultVoiceIdx = fIndex;
-        } else {
-          const mIndex = availableVoices.findIndex(v => /male|david|guy|george|ryan/i.test(v.name));
-          if (mIndex !== -1) defaultVoiceIdx = mIndex;
-        }
-
-        updatedSpeakers[name] = {
-          voiceIndex: defaultVoiceIdx,
-          defaultMood: 'normal',
-          color: colorPalette[i % colorPalette.length],
-          skip: false
-        };
-      }
+      updatedSpeakers[name] = detectedSpeakers[name] || {
+        voiceType: 'local',
+        voiceValue: '0',
+        color: colorPalette[i % colorPalette.length],
+        skip: false
+      };
     });
 
     detectedSpeakers = updatedSpeakers;
@@ -422,136 +499,218 @@ Sarah: Of course Saleh, let's start reading together!</textarea>
 
   function renderSpeakersConfig() {
     const container = document.getElementById('speakersContainer');
-    const speakerKeys = Object.keys(detectedSpeakers);
     container.innerHTML = '';
 
-    speakerKeys.forEach(name => {
+    Object.keys(detectedSpeakers).forEach(name => {
       const conf = detectedSpeakers[name];
       const card = document.createElement('div');
       card.className = 'speaker-card';
       card.style.borderRight = `4px solid ${conf.color.border}`;
 
-      let voiceOptions = availableVoices.map((v, i) => {
-        const isSelected = i === conf.voiceIndex ? 'selected' : '';
-        const isNat = v.name.includes('Natural') || v.name.includes('Online');
-        return `<option value="${i}" ${isSelected}>${isNat ? '⭐ ' : ''}${v.name.slice(0, 22)}</option>`;
+      let localOpts = availableVoices.map((v, i) => {
+        const val = `local:${i}`;
+        const isSel = (conf.voiceType === 'local' && conf.voiceValue == i) ? 'selected' : '';
+        const nameLower = v.name.toLowerCase();
+        let country = 'أمريكا';
+        if (nameLower.includes('uk') || nameLower.includes('kingdom')) country = 'بريطانيا';
+        else if (nameLower.includes('india')) country = 'الهند';
+        else if (nameLower.includes('australia')) country = 'أستراليا';
+        else if (nameLower.includes('canada')) country = 'كندا';
+
+        let gender = /female|zira|samantha|aria|jenny/i.test(nameLower) ? 'امرأة' : 'رجل';
+        const clean = v.name.replace(/Microsoft | Online \(Natural\)| - English \(.*?\)/gi, '').trim();
+        return `<option value="${val}" ${isSel}>${clean} — [${gender} / ${country}]</option>`;
       }).join('');
 
-      const isTitle = name === 'Title/Narrator';
+      let azureOpts = cloudVoicesCatalog.azure.map(v => {
+        const val = `azure:${v.id}`;
+        const isSel = (conf.voiceType === 'azure' && conf.voiceValue === v.id) ? 'selected' : '';
+        return `<option value="${val}" ${isSel}>${v.name} — [${v.gender} / ${v.country}]</option>`;
+      }).join('');
+
+      let googleOpts = cloudVoicesCatalog.google.map(v => {
+        const val = `google:${v.id}`;
+        const isSel = (conf.voiceType === 'google' && conf.voiceValue === v.id) ? 'selected' : '';
+        return `<option value="${val}" ${isSel}>${v.name} — [${v.gender} / ${v.country}]</option>`;
+      }).join('');
+
+      let elevenOpts = cloudVoicesCatalog.eleven.map(v => {
+        const val = `eleven:${v.id}`;
+        const isSel = (conf.voiceType === 'eleven' && conf.voiceValue === v.id) ? 'selected' : '';
+        return `<option value="${val}" ${isSel}>${v.name} — [${v.gender} / ${v.country}]</option>`;
+      }).join('');
 
       card.innerHTML = `
         <div class="speaker-card-header">
-          <span class="speaker-name-badge" style="color: ${conf.color.text};">
-            ${isTitle ? '📖 ' + name : '👤 ' + name}
-          </span>
-          <button class="btn-secondary btn-sm" onclick="testSpeakerVoice('${name}')" title="تجربة الصوت والمشاعر لهذا المتحدث">
-            🔊 تجربة الصوت
-          </button>
+          <span class="speaker-name-badge" style="color: ${conf.color.text};">👤 ${name}</span>
+          <button class="btn-secondary btn-sm" onclick="testVoice('${name}')">🔊 تجربة</button>
         </div>
         <div class="speaker-controls">
           <div class="control-item">
             <label>الصوت:</label>
-            <select onchange="detectedSpeakers['${name}'].voiceIndex = parseInt(this.value)">
-              ${voiceOptions}
+            <select onchange="updateSpeakerVoice('${name}', this.value)">
+              <optgroup label="💻 أصوات المتصفح (محلية / مجانية)">${localOpts}</optgroup>
+              <optgroup label="🌐 ElevenLabs (فائق الواقعية)">${elevenOpts}</optgroup>
+              <optgroup label="🌐 Microsoft Azure (سحابي)">${azureOpts}</optgroup>
+              <optgroup label="🌐 Google Cloud (سحابي)">${googleOpts}</optgroup>
             </select>
           </div>
-          <div class="control-item">
-            <label>المشاعر الافتراضية:</label>
-            <select onchange="detectedSpeakers['${name}'].defaultMood = this.value">
-              ${Object.keys(moodPresets).map(mKey => `
-                <option value="${mKey}" ${conf.defaultMood === mKey ? 'selected' : ''}>${moodPresets[mKey].label}</option>
-              `).join('')}
-            </select>
+          <div id="cloud_warn_${name}" style="font-size: 0.76rem; color: #fbbf24; background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.35); border-radius: 6px; padding: 4px 8px; margin-top: 2px; display: ${conf.voiceType !== 'local' ? 'block' : 'none'};">
+            ⚠️ <strong>تنبيه:</strong> هذا الصوت سحابي ويستهلك من رصيدك في (<span id="cloud_name_${name}">${conf.voiceType === 'azure' ? 'Microsoft Azure' : conf.voiceType === 'google' ? 'Google Cloud' : 'ElevenLabs'}</span>).
           </div>
-          ${isTitle ? `
-          <div class="control-item" style="margin-top: 4px; padding-top: 4px; border-top: 1px dashed var(--border);">
+          ${name === 'Title/Narrator' ? `
+          <div class="control-item" style="border-top:1px dashed #1c2e26; padding-top:4px;">
             <label><input type="checkbox" onchange="detectedSpeakers['${name}'].skip = this.checked"> تخطي قراءة العنوان</label>
-          </div>
-          ` : ''}
+          </div>` : ''}
         </div>
       `;
       container.appendChild(card);
     });
   }
 
-  function getEffectiveSpeed() {
-    return parseFloat(document.getElementById('globalSpeedSelect')?.value || '0.8');
-  }
+  function updateSpeakerVoice(name, value) {
+    const [type, val] = value.split(':');
+    detectedSpeakers[name].voiceType = type;
+    detectedSpeakers[name].voiceValue = val;
 
-  function testSpeakerVoice(name) {
-    const conf = detectedSpeakers[name];
-    if (!conf || !('speechSynthesis' in window)) return;
-
-    window.speechSynthesis.cancel();
-    const moodSetting = moodPresets[conf.defaultMood] || moodPresets.normal;
-    const testText = `${name}. ${moodSetting.preview}`;
-
-    const utter = new SpeechSynthesisUtterance(testText);
-    if (availableVoices[conf.voiceIndex]) utter.voice = availableVoices[conf.voiceIndex];
-    utter.rate = getEffectiveSpeed() * moodSetting.rateMul;
-    utter.pitch = moodSetting.pitch;
-
-    window.speechSynthesis.speak(utter);
+    const warnEl = document.getElementById(`cloud_warn_${name}`);
+    const serviceNameEl = document.getElementById(`cloud_name_${name}`);
+    if (warnEl && serviceNameEl) {
+      if (type !== 'local') {
+        const labels = { azure: 'Microsoft Azure', google: 'Google Cloud', eleven: 'ElevenLabs' };
+        serviceNameEl.textContent = labels[type] || 'الخدمة السحابية';
+        warnEl.style.display = 'block';
+      } else {
+        warnEl.style.display = 'none';
+      }
+    }
   }
 
   function renderViewer() {
     const viewer = document.getElementById('dialogueViewer');
     viewer.innerHTML = '';
-
     parsedLines.forEach((item, idx) => {
       const conf = detectedSpeakers[item.speaker] || { color: colorPalette[0] };
       const bubble = document.createElement('div');
       bubble.id = `line_${idx}`;
       bubble.className = 'line-bubble';
-
       bubble.innerHTML = `
         <span class="line-speaker" style="background:${conf.color.bg}; border: 1px solid ${conf.color.border}; color:${conf.color.text};">
           ${item.speaker}
         </span>
         <span class="line-text">${item.text}</span>
-        <div class="line-actions">
-          <select onchange="parsedLines[${idx}].lineMood = this.value" title="تغيير مشاعر هذا السطر تحديداً" style="font-size:0.8rem; padding: 3px 5px;">
-            <option value="default">نفس نمط المتحدث</option>
-            <option value="normal">😐 طبيعي</option>
-            <option value="excited">😃 متحمس</option>
-            <option value="angry">😠 غاضب</option>
-            <option value="sad">😔 حزين</option>
-            <option value="calm">🤫 هادئ</option>
-          </select>
-          <button class="line-play-btn" onclick="playSingleLine(${idx})" title="قراءة هذا السطر فقط">🔊</button>
-        </div>
+        <button class="line-play-btn" onclick="speakLinePromise(${idx})">🔊</button>
       `;
       viewer.appendChild(bubble);
     });
   }
 
-  function playSingleLine(idx) {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
+  async function fetchCloudAudioBlob(speakerConf, text, speed) {
+    if (speakerConf.voiceType === 'eleven') {
+      const key = localStorage.getItem('tts_eleven_key');
+      if (!key) throw new Error('مفتاح ElevenLabs مفقود');
+      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${speakerConf.voiceValue}`, {
+        method: 'POST',
+        headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, model_id: 'eleven_turbo_v2_5' })
+      });
+      if (!res.ok) throw new Error('خطأ في استجابة ElevenLabs');
+      return await res.blob();
+    }
+
+    if (speakerConf.voiceType === 'google') {
+      const key = localStorage.getItem('tts_google_key');
+      if (!key) throw new Error('مفتاح Google Cloud مفقود');
+      const langCode = speakerConf.voiceValue.startsWith('en-GB') ? 'en-GB' : 'en-US';
+      const res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${key}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          input: { text },
+          voice: { languageCode: langCode, name: speakerConf.voiceValue },
+          audioConfig: { audioEncoding: 'MP3', speakingRate: speed }
+        })
+      });
+      if (!res.ok) throw new Error('خطأ في استجابة Google');
+      const data = await res.json();
+      return base64ToBlob(data.audioContent, 'audio/mp3');
+    }
+
+    if (speakerConf.voiceType === 'azure') {
+      const key = localStorage.getItem('tts_azure_key');
+      const region = localStorage.getItem('tts_azure_region') || 'eastus';
+      if (!key) throw new Error('مفتاح Azure مفقود');
+      const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+        method: 'POST',
+        headers: {
+          'Ocp-Apim-Subscription-Key': key,
+          'Content-Type': 'application/ssml+xml',
+          'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3'
+        },
+        body: `<speak version='1.0' xml:lang='en-US'><voice xml:lang='en-US' name='${speakerConf.voiceValue}'><prosody rate='${speed}'>${text}</prosody></voice></speak>`
+      });
+      if (!res.ok) throw new Error('خطأ في استجابة Azure');
+      return await res.blob();
+    }
+    return null;
+  }
+
+  async function speakLinePromise(idx) {
+    const item = parsedLines[idx];
+    const conf = detectedSpeakers[item.speaker] || { voiceType: 'local', voiceValue: '0' };
+    const speed = parseFloat(document.getElementById('globalSpeedSelect').value) || 0.85;
+
     highlightLine(idx);
 
-    const item = parsedLines[idx];
-    const conf = detectedSpeakers[item.speaker] || { defaultMood: 'normal', voiceIndex: 0 };
-    const effectiveMood = item.lineMood !== 'default' ? item.lineMood : conf.defaultMood;
-    const moodSetting = moodPresets[effectiveMood] || moodPresets.normal;
+    if (conf.voiceType !== 'local') {
+      try {
+        const blob = await fetchCloudAudioBlob(conf, item.text, speed);
+        if (blob) {
+          await playAudioBlob(blob);
+          unhighlightLine(idx);
+          return;
+        }
+      } catch (e) {
+        console.warn('فشل الصوت السحابي، جاري التحويل للمحلي:', e);
+      }
+    }
 
-    const utter = new SpeechSynthesisUtterance(item.text);
-    if (availableVoices[conf.voiceIndex]) utter.voice = availableVoices[conf.voiceIndex];
-    utter.rate = getEffectiveSpeed() * moodSetting.rateMul;
-    utter.pitch = moodSetting.pitch;
+    return new Promise(resolve => {
+      if (!('speechSynthesis' in window)) { resolve(); return; }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(item.text);
+      const vIdx = parseInt(conf.voiceValue, 10) || 0;
+      if (availableVoices[vIdx]) utter.voice = availableVoices[vIdx];
+      utter.rate = speed;
+      utter.onend = () => { unhighlightLine(idx); resolve(); };
+      utter.onerror = () => { unhighlightLine(idx); resolve(); };
+      window.speechSynthesis.speak(utter);
+    });
+  }
 
-    utter.onend = () => unhighlightLine(idx);
-    utter.onerror = () => unhighlightLine(idx);
-    window.speechSynthesis.speak(utter);
+  function playAudioBlob(blob) {
+    return new Promise(resolve => {
+      if (currentAudioPlayer) currentAudioPlayer.pause();
+      const url = URL.createObjectURL(blob);
+      currentAudioPlayer = new Audio(url);
+      currentAudioPlayer.onended = () => resolve();
+      currentAudioPlayer.onerror = () => resolve();
+      currentAudioPlayer.play();
+    });
+  }
+
+  function base64ToBlob(base64, type) {
+    const bin = atob(base64);
+    const len = bin.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+    return new Blob([bytes], { type });
   }
 
   function highlightLine(idx) {
     document.querySelectorAll('.line-bubble').forEach(b => b.classList.remove('active-reading'));
     const el = document.getElementById(`line_${idx}`);
-    if (el) {
-      el.classList.add('active-reading');
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+    if (el) el.classList.add('active-reading');
   }
 
   function unhighlightLine(idx) {
@@ -559,18 +718,20 @@ Sarah: Of course Saleh, let's start reading together!</textarea>
     if (el) el.classList.remove('active-reading');
   }
 
+  function testVoice(speakerName) {
+    const testIdx = parsedLines.findIndex(l => l.speaker === speakerName);
+    if (testIdx !== -1) speakLinePromise(testIdx);
+  }
+
   async function togglePlayDialogue() {
-    if (isPlaying) {
-      stopAllPlayback();
-      return;
-    }
+    if (isPlaying) { stopAllPlayback(); return; }
     if (parsedLines.length === 0) parseDialogue();
     if (parsedLines.length === 0) return;
 
     shouldStop = false;
     isPlaying = true;
-    document.getElementById('btnPlayAll').innerHTML = '⏹️ إيقاف القراءة';
-    document.getElementById('readingStatusNotice').textContent = 'جاري تشغيل الحوار صفيّاً...';
+    document.getElementById('btnPlayAll').innerHTML = '⏹️ إيقاف';
+    document.getElementById('readingStatusNotice').textContent = 'جاري القراءة...';
 
     const pauseMs = parseInt(document.getElementById('pauseDurationSelect').value, 10) || 800;
 
@@ -578,10 +739,7 @@ Sarah: Of course Saleh, let's start reading together!</textarea>
       if (shouldStop) break;
       const item = parsedLines[i];
       const conf = detectedSpeakers[item.speaker];
-
-      if (conf && conf.skip && item.speaker === 'Title/Narrator') {
-        continue;
-      }
+      if (conf && conf.skip && item.speaker === 'Title/Narrator') continue;
 
       await speakLinePromise(i);
       if (shouldStop) break;
@@ -591,175 +749,175 @@ Sarah: Of course Saleh, let's start reading together!</textarea>
     stopAllPlayback();
   }
 
-  function speakLinePromise(idx) {
-    return new Promise(resolve => {
-      const item = parsedLines[idx];
-      const conf = detectedSpeakers[item.speaker] || { defaultMood: 'normal', voiceIndex: 0 };
-      const effectiveMood = item.lineMood !== 'default' ? item.lineMood : conf.defaultMood;
-      const moodSetting = moodPresets[effectiveMood] || moodPresets.normal;
-
-      const utter = new SpeechSynthesisUtterance(item.text);
-      if (availableVoices[conf.voiceIndex]) utter.voice = availableVoices[conf.voiceIndex];
-      utter.rate = getEffectiveSpeed() * moodSetting.rateMul;
-      utter.pitch = moodSetting.pitch;
-
-      highlightLine(idx);
-
-      utter.onend = () => {
-        unhighlightLine(idx);
-        resolve();
-      };
-      utter.onerror = () => {
-        unhighlightLine(idx);
-        resolve();
-      };
-
-      window.speechSynthesis.speak(utter);
-    });
-  }
-
   function stopAllPlayback() {
     shouldStop = true;
     isPlaying = false;
+    if (currentAudioPlayer) currentAudioPlayer.pause();
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     document.querySelectorAll('.line-bubble').forEach(b => b.classList.remove('active-reading'));
-    document.getElementById('btnPlayAll').innerHTML = '▶️ تشغيل الحوار المباشر';
+    document.getElementById('btnPlayAll').innerHTML = '▶️ تشغيل الحوار';
     document.getElementById('readingStatusNotice').textContent = 'جاهز للتشغيل';
   }
 
-  // ========================================================
-  // التسجيل والتنزيل الصوتي المباشر بدون قيود CORS وبدون أخطاء
-  // ========================================================
-  async function recordAndExportDirect() {
-    if (parsedLines.length === 0) parseDialogue();
-    if (parsedLines.length === 0) {
-      alert('يرجى إدخال نص المحادثة أولاً.');
-      return;
-    }
-
-    const btn = document.getElementById('btnExportDirect');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '⏳ جاري قراءة وحفظ الصوت...';
-    btn.classList.add('processing');
-    btn.disabled = true;
-
-    stopAllPlayback();
-
-    try {
-      // طلب التقاط صوت التبويب الداخلي نقي 100% بدون مايك خارجي
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-        audio: true
-      });
-
-      const audioTracks = stream.getAudioTracks();
-      if (audioTracks.length === 0) {
-        alert('تنبيه: يجب تفعيل خيار "مشاركة الصوت" (Share tab audio) في النافذة ليتم حفظ الصوت.');
-        stream.getTracks().forEach(t => t.stop());
-        btn.innerHTML = originalText;
-        btn.classList.remove('processing');
-        btn.disabled = false;
-        return;
-      }
-
-      // إيقاف مسار الفيديو فوراً لتوفير الموارد
-      stream.getVideoTracks().forEach(t => t.stop());
-
-      const audioStream = new MediaStream(audioTracks);
-      const mediaRecorder = new MediaRecorder(audioStream);
-      const audioChunks = [];
-
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-
-      mediaRecorder.onstop = async () => {
-        const rawBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        try {
-          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          const arrayBuffer = await rawBlob.arrayBuffer();
-          const decoded = await audioCtx.decodeAudioData(arrayBuffer);
-          const wavBlob = audioBufferToWav(decoded);
-          if (audioCtx.state !== 'closed') audioCtx.close();
-
-          const fileUrl = URL.createObjectURL(wavBlob);
-          const fileName = `dialogue_${Date.now()}.wav`;
-
-          const pBox = document.getElementById('playerBox');
-          const preview = document.getElementById('audioPreview');
-          preview.src = fileUrl;
-          pBox.style.display = 'block';
-
-          const a = document.createElement('a');
-          a.href = fileUrl;
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-
-          document.getElementById('exportStatusNotice').textContent = 'تم تنزيل الصوت الحقيقي بصيغة (WAV) بنجاح ويعمل 100% ✔️';
-        } catch (err) {
-          console.error(err);
-        } finally {
-          audioStream.getTracks().forEach(t => t.stop());
-          btn.innerHTML = originalText;
-          btn.classList.remove('processing');
-          btn.disabled = false;
-        }
-      };
-
-      mediaRecorder.start();
-
-      // تشغيل الحوار كاملاً بالتزامن مع التسجيل الرقمي الداخلي
-      await togglePlayDialogue();
-
-      // إيقاف التسجيل فور انتهاء المحادثة
-      if (mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-      }
-
-    } catch (err) {
-      console.warn(err);
-      btn.innerHTML = originalText;
-      btn.classList.remove('processing');
-      btn.disabled = false;
-    }
-  }
-
-  // كود تشفير WAV القياسي المعتمد (16-bit PCM Stereo/Mono)
-  function audioBufferToWav(buffer) {
-    const numOfChan = buffer.numberOfChannels;
-    const length = buffer.length * numOfChan * 2 + 44;
+  // دمج مقاطع الـ WAV السحابية
+  async function audioBufferToWavBlob(audioBuffer) {
+    const numOfChan = audioBuffer.numberOfChannels;
+    const length = audioBuffer.length * numOfChan * 2 + 44;
     const out = new DataView(new ArrayBuffer(length));
-    let sampleRate = buffer.sampleRate;
+    const channels = [];
+    let sampleRate = audioBuffer.sampleRate;
+    let offset = 0;
     let pos = 0;
 
     function setUint16(data) { out.setUint16(pos, data, true); pos += 2; }
     function setUint32(data) { out.setUint32(pos, data, true); pos += 4; }
 
-    setUint32(0x46464952); // "RIFF"
+    setUint32(0x46464952);
     setUint32(length - 8);
-    setUint32(0x45564157); // "WAVE"
-    setUint32(0x20746d66); // "fmt "
+    setUint32(0x45564157);
+    setUint32(0x20746d66);
     setUint32(16);
-    setUint16(1);  // PCM
+    setUint16(1);
     setUint16(numOfChan);
     setUint32(sampleRate);
     setUint32(sampleRate * 2 * numOfChan);
     setUint16(numOfChan * 2);
     setUint16(16);
-    setUint32(0x61746164); // "data"
+    setUint32(0x61746164);
     setUint32(length - pos - 4);
 
-    for (let i = 0; i < numOfChan; i++) {
-      const channel = buffer.getChannelData(i);
-      let p = pos;
-      for (let j = 0; j < buffer.length; j++) {
-        let sample = Math.max(-1, Math.min(1, channel[j]));
+    for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
+      channels.push(audioBuffer.getChannelData(i));
+    }
+
+    while (pos < length) {
+      for (let i = 0; i < numOfChan; i++) {
+        let sample = Math.max(-1, Math.min(1, channels[i][offset]));
         sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
-        out.setInt16(p, sample, true);
-        p += 2;
+        out.setInt16(pos, sample, true);
+        pos += 2;
       }
+      offset++;
     }
     return new Blob([out.buffer], { type: 'audio/wav' });
+  }
+
+  // 1. تصدير مباشر للأصوات السحابية (WAV نظيف وفوري)
+  async function exportCloudDialogueAudio() {
+    if (parsedLines.length === 0) parseDialogue();
+    if (parsedLines.length === 0) return;
+
+    const btn = document.getElementById('btnExportCloud');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '⏳ جاري التجميع والتحميل...';
+    btn.disabled = true;
+
+    try {
+      const speed = parseFloat(document.getElementById('globalSpeedSelect').value) || 0.85;
+      const pauseDuration = (parseInt(document.getElementById('pauseDurationSelect').value, 10) || 800) / 1000;
+      
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const lineAudioBuffers = [];
+
+      for (let i = 0; i < parsedLines.length; i++) {
+        const item = parsedLines[i];
+        const conf = detectedSpeakers[item.speaker];
+        if (conf && conf.skip && item.speaker === 'Title/Narrator') continue;
+
+        if (conf && conf.voiceType !== 'local') {
+          try {
+            const blob = await fetchCloudAudioBlob(conf, item.text, speed);
+            const arrayBuffer = await blob.arrayBuffer();
+            const decoded = await audioCtx.decodeAudioData(arrayBuffer);
+            lineAudioBuffers.push(decoded);
+          } catch (err) {
+            console.warn(`تعذر جلب صوت السحابة للسطر ${i}`);
+          }
+        }
+      }
+
+      if (lineAudioBuffers.length > 0) {
+        let totalLength = 0;
+        lineAudioBuffers.forEach((buf, i) => {
+          totalLength += buf.length;
+          if (i < lineAudioBuffers.length - 1) {
+            totalLength += Math.floor(pauseDuration * buf.sampleRate);
+          }
+        });
+
+        const mergedBuffer = audioCtx.createBuffer(1, totalLength, audioCtx.sampleRate);
+        const channelData = mergedBuffer.getChannelData(0);
+        let currentOffset = 0;
+
+        for (let i = 0; i < lineAudioBuffers.length; i++) {
+          const buf = lineAudioBuffers[i];
+          const srcData = buf.getChannelData(0);
+          channelData.set(srcData, currentOffset);
+          currentOffset += buf.length;
+          if (i < lineAudioBuffers.length - 1) {
+            currentOffset += Math.floor(pauseDuration * audioCtx.sampleRate);
+          }
+        }
+
+        const wavBlob = await audioBufferToWavBlob(mergedBuffer);
+        const url = URL.createObjectURL(wavBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `dialogue_cloud_${Date.now()}.wav`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+        alert('لم يتم العثور على أسطر بأصوات سحابية. إذا كنت تستخدم أصوات المتصفح، استخدم زر "🔴 تسجيل وتحميل أصوات المتصفح".');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('حدث خطأ أثناء تجميع الصوت السحابي.');
+    } finally {
+      btn.innerHTML = orig;
+      btn.disabled = false;
+    }
+  }
+
+  // 2. تسجيل وحفظ أصوات المتصفح المحلية المجانية
+  async function recordAndExportLocalAudio() {
+    if (parsedLines.length === 0) parseDialogue();
+    const btn = document.getElementById('btnRecordLocal');
+    const orig = btn.innerHTML;
+
+    try {
+      alert('تنبيه: في النافذة التالية، اختر نافذة المتصفح الحالية وتأكد من تفعيل خيار (Share tab audio / مشاركة صوت التبويب) لبدء التسجيل التلقائي.');
+      
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: { autoGainControl: false, echoCancellation: false, noiseSuppression: false }
+      });
+      stream.getVideoTracks().forEach(t => t.stop());
+
+      btn.innerHTML = '🔴 جاري التسجيل والحفظ...';
+      btn.disabled = true;
+
+      const mediaRecorder = new MediaRecorder(stream);
+      const chunks = [];
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `dialogue_local_${Date.now()}.webm`;
+        a.click();
+        stream.getTracks().forEach(t => t.stop());
+        btn.innerHTML = orig;
+        btn.disabled = false;
+      };
+
+      mediaRecorder.start();
+      await togglePlayDialogue();
+      await new Promise(r => setTimeout(r, 600));
+      if (mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    } catch (e) {
+      btn.innerHTML = orig;
+      btn.disabled = false;
+    }
   }
 
   window.addEventListener('DOMContentLoaded', () => {
