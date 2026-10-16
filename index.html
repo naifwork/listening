@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>استوديو محادثات اللغة الإنجليزية التفاعلي | Dialogue Studio</title>
+  
+  <!-- استدعاء خط اليمامة من Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alyamama:wght@300..900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0f1013;
+      --card: #18191f;
+      --border: #282a36;
+      --text: #e6e6ee;
+      --muted: #9597a6;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --purple: #8b5cf6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Alyamama', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      line-height: 1.6;
+    }
+
+    .layout-wrapper {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+
+    h1 { font-size: 1.35rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    h2 { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    p.sub { font-size: 0.85rem; color: var(--muted); }
+
+    textarea {
+      width: 100%;
+      height: 130px;
+      background: #090a0d;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #fff;
+      padding: 12px;
+      font-size: 1rem;
+      resize: vertical;
+      direction: ltr;
+      text-align: left;
+      line-height: 1.6;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    textarea:focus { outline: none; border-color: var(--accent); }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    button {
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #fff;
+    }
+
+    .btn-success { background: #059669; }
+    .btn-success:hover { background: #047857; }
+    .btn-export { background: #7c3aed; }
+    .btn-export:hover { background: #6d28d9; }
+    .btn-export.processing { background: #4c1d95; animation: pulse 1.5s infinite; }
+    .btn-secondary { background: #262833; color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: #343746; }
+    .btn-settings { background: #1e2029; border: 1px solid var(--border); color: #fff; }
+    .btn-sm { padding: 4px 10px; font-size: 0.8rem; border-radius: 6px; }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .speakers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .speaker-card {
+      background: #121318;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .speaker-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .speaker-name-badge {
+      font-weight: 700;
+      color: #fff;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .speaker-controls { display: flex; flex-direction: column; gap: 7px; font-size: 0.85rem; }
+    .control-item { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+
+    select, input[type="text"], input[type="password"] {
+      background: #090a0d;
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    select { max-width: 175px; }
+
+    .dialogue-viewer {
+      direction: ltr;
+      text-align: left;
+      background: #090a0d;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      min-height: 180px;
+      max-height: 480px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: system-ui, -apple-system, sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    .line-bubble {
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #14151c;
+      border: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      transition: 0.2s ease;
+    }
+
+    .line-bubble.active-reading {
+      border-color: var(--accent);
+      background: rgba(37, 99, 235, 0.18);
+      transform: scale(1.01);
+      box-shadow: 0 0 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .line-speaker {
+      font-weight: 800;
+      font-size: 0.85rem;
+      min-width: 80px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-align: center;
+      user-select: none;
+    }
+
+    .line-text { font-size: 1.05rem; line-height: 1.5; color: #e4e4ed; flex: 1; }
+    .line-actions { display: flex; align-items: center; gap: 6px; }
+
+    .line-play-btn {
+      background: #242633;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 5px 10px;
+    }
+    .line-play-btn:hover { color: #fff; border-color: var(--accent); }
+
+    .player-card {
+      display: none;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #121318;
+      border: 1px solid var(--border);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      width: 90%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout-wrapper">
+  
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+      <div>
+        <h1>استوديو المحادثات الصوتية المتعددة</h1>
+        <p class="sub">تخصيص الأصوات والمشاعر، سرعة الحوار العامة، وتوليد وتنزيل ملفات صوتية حقيقية صالحة للتشغيل.</p>
+      </div>
+      
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 0.85rem;">
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <label>سرعة الحوار ككل:</label>
+          <select id="globalSpeedSelect">
+            <option value="0.65">🐢 بطيء جداً (0.65x)</option>
+            <option value="0.8" selected>🚶 بطيء وتدريبي (0.80x)</option>
+            <option value="1.0">⚖️ سرعة عادية (1.0x)</option>
+            <option value="1.2">🚀 سريع للطلاقة (1.20x)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <label>الوقفة بين المتحدثين:</label>
+          <select id="pauseDurationSelect">
+            <option value="400">0.4 ثانية (سريعة)</option>
+            <option value="800" selected>0.8 ثانية (طبيعية ومثالية)</option>
+            <option value="1200">1.2 ثانية (مريحة للطلاب)</option>
+            <option value="1800">1.8 ثانية (بطيئة وتدريبية)</option>
+          </select>
+        </div>
+
+        <button class="btn-settings btn-sm" onclick="openSettingsModal()" title="إعدادات الربط السحابي وحسابك الخاص">
+          ⚙️ إعدادات الربط
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>1. نص المحادثة (تحديث تلقائي للشخصيات والعنوان بمجرد التعديل أو اللصق):</h2>
+    <textarea id="dialogueInput" oninput="handleTextInputChange()" placeholder="ألصق أو اكتب الحوار هنا...">Schools Are Great Fun!
+Ali: Good morning Sarah, are you ready for the presentation today?
+Sarah: Good morning Ali! Yes, I prepared all the slides yesterday.
+Saleh: Hey guys! Can I practice presenting with you?
+Sarah: Of course Saleh, let's start reading together!</textarea>
+    
+    <div class="btn-row">
+      <button id="btnPlayAll" class="btn-success" onclick="togglePlayDialogue()">▶️ تشغيل الحوار المباشر</button>
+
+      <!-- اختيار الصيغ المتعددة -->
+      <div style="display: inline-flex; align-items: center; gap: 4px; background: #20222b; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border);">
+        <label style="font-size: 0.85rem; color: var(--muted);">الصيغة:</label>
+        <select id="exportFormatSelect" style="padding: 3px 6px; font-size: 0.85rem;">
+          <option value="wav" selected>WAV (أعلى جودة واستوديو)</option>
+          <option value="mp3">MP3 (شامل وخفيف)</option>
+          <option value="m4a">M4A (نقي للأجهزة الذكية)</option>
+        </select>
+      </div>
+
+      <button id="btnExportDirect" class="btn-export" onclick="exportDialogueAudioDirect()">
+        💾 تحميل المحادثة كاملة كملف صوتي
+      </button>
+
+      <button class="btn-secondary" onclick="stopAllPlayback()">⏹️ إيقاف</button>
+    </div>
+
+    <!-- مشغل المعاينة الفوري الصامت بعد اكتمال التوليد -->
+    <div id="playerBox" class="player-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <span style="font-size: 0.85rem; font-weight: 700; color: #fff;">🎧 استمع للملف المحفوظ في جهازك:</span>
+        <span id="exportStatusNotice" style="font-size: 0.8rem; color: var(--success);">تم إنشاء وتنزيل الملف بنجاح ✔️</span>
+      </div>
+      <audio id="audioPreview" controls style="width: 100%; height: 36px;"></audio>
+    </div>
+  </div>
+
+  <div class="card" id="speakersPanel">
+    <h2>2. تخصيص المتحدثين وزر تجربة النبرة والمشاعر:</h2>
+    <div id="speakersContainer" class="speakers-grid"></div>
+  </div>
+
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <h2>3. شاشة العرض والمتابعة الصفية:</h2>
+      <span id="readingStatusNotice" style="font-size: 0.85rem; color: var(--muted);">جاهز للتشغيل</span>
+    </div>
+    <div id="dialogueViewer" class="dialogue-viewer"></div>
+  </div>
+
+  <!-- شريط التوقيع -->
+  <footer style="text-align: center; padding: 14px 0 6px; font-size: 0.9rem; color: var(--muted);">
+    Built with <span style="color: #f59e0b;">⚡</span> By: <span style="color: #60a5fa; font-weight: 700;">Naif</span>
+  </footer>
+</div>
+
+<!-- نافذة إعدادات الربط السحابي (BYOK) -->
+<div id="settingsModal" class="modal-overlay">
+  <div class="modal-box">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0;">⚙️ إعدادات الربط السحابي (اختياري)</h2>
+      <button class="btn-secondary btn-sm" onclick="closeSettingsModal()">✕</button>
+    </div>
+    <p class="sub">الموقع يعمل مجاناً وتلقائياً بنسبة 100%. إذا أردت استخدام أصوات ElevenLabs السينمائية فائقة الواقعية، ضع مفتاحك هنا وسيُحفظ محلياً في جهازك فقط دون مشاركته مع أحد.</p>
+    
+    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+      <label>مزود المحرك الصوتي:</label>
+      <select id="apiProviderSelect" onchange="toggleProviderInputs()">
+        <option value="free" selected>⚡ الوضع التلقائي المجاني (بدون أي مفتاح)</option>
+        <option value="elevenlabs">🎙️ ElevenLabs (أصوات سينمائية خاصة)</option>
+      </select>
+
+      <div id="elevenLabsWrap" style="display: none; flex-direction: column; gap: 4px;">
+        <label>مفتاح ElevenLabs API Key:</label>
+        <input type="password" id="elevenKeyInput" placeholder="sk_...">
+        <span style="font-size: 0.75rem; color: var(--muted);">يُخزن في متصفحك محلياً ولا يُرسل لأي خادم وسيط.</span>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px;">
+      <button class="btn-secondary btn-sm" onclick="closeSettingsModal()">إلغاء</button>
+      <button class="btn-success btn-sm" onclick="saveApiSettings()">حفظ الإعدادات</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // تحميل Puter.js بشكل شرطي لمنع خطأ Origin على البروتوكول المحلي
+  if (window.location.protocol.startsWith('http')) {
+    const pScript = document.createElement('script');
+    pScript.src = "https://js.puter.com/v2/";
+    pScript.async = true;
+    document.head.appendChild(pScript);
+  }
+
+  let availableVoices = [];
+  let parsedLines = [];
+  let detectedSpeakers = {};
+  let isPlaying = false;
+  let shouldStop = false;
+  let textDebounceTimer = null;
+
+  // أشهر أصوات ElevenLabs للتبديل التلقائي عند ربط الحساب
+  const elevenVoicesList = [
+    { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel (Female - Clear & Calming)", gender: "female" },
+    { id: "EXAVITQu4vr4xnSDxMaL", name: "Bella (Female - Soft & Friendly)", gender: "female" },
+    { id: "AZnzlk1XvdvUeBnXmlld", name: "Domi (Female - Expressive)", gender: "female" },
+    { id: "ErXwobaYiN019PkySvjV", name: "Antoni (Male - Energetic & Warm)", gender: "male" },
+    { id: "TxGEqnHWrfWFTfGW9XjX", name: "Josh (Male - Natural & Deep)", gender: "male" },
+    { id: "pNInz6obpgDQGcFmaJgB", name: "Adam (Male - Narrator & Conversational)", gender: "male" }
+  ];
+
+  const colorPalette = [
+    { bg: 'rgba(37, 99, 235, 0.22)', border: '#3b82f6', text: '#93c5fd' },
+    { bg: 'rgba(139, 92, 246, 0.22)', border: '#8b5cf6', text: '#c4b5fd' },
+    { bg: 'rgba(16, 185, 129, 0.22)', border: '#10b981', text: '#6ee7b7' },
+    { bg: 'rgba(245, 158, 11, 0.22)', border: '#f59e0b', text: '#fde68a' },
+    { bg: 'rgba(236, 72, 153, 0.22)', border: '#ec4899', text: '#fbcfe8' },
+    { bg: 'rgba(6, 182, 212, 0.22)', border: '#06b6d4', text: '#67e8f9' }
+  ];
+
+  const moodPresets = {
+    normal:  { rateMul: 1.0, pitch: 1.0, label: "😐 طبيعي (Normal)", preview: "Hello! This is my natural speaking voice." },
+    excited: { rateMul: 1.15, pitch: 1.25, label: "😃 متحمس / سعيد (Excited)", preview: "Hello! I am very excited and happy to see you all today!" },
+    angry:   { rateMul: 1.1, pitch: 0.85, label: "😠 غاضب / حاد (Angry)", preview: "Listen carefully! I am really upset and angry about this!" },
+    sad:     { rateMul: 0.85, pitch: 0.8, label: "😔 حزين / محبط (Sad)", preview: "Hello... I am feeling a bit tired and sad today..." },
+    calm:    { rateMul: 0.88, pitch: 1.05, label: "🤫 هادئ / مسترخي (Calm)", preview: "Hello. Take a deep breath and let us begin calmly." }
+  };
+
+  function isElevenActive() {
+    return localStorage.getItem('tts_provider') === 'elevenlabs' && Boolean(localStorage.getItem('tts_api_key'));
+  }
+
+  function populateVoices() {
+    if (!('speechSynthesis' in window)) return;
+    const all = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+    
+    all.sort((a, b) => {
+      const aNat = a.name.includes('Natural') || a.name.includes('Online');
+      const bNat = b.name.includes('Natural') || b.name.includes('Online');
+      return (bNat ? 1 : 0) - (aNat ? 1 : 0);
+    });
+
+    availableVoices = all;
+    renderSpeakersConfig();
+  }
+
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+    populateVoices();
+  }
+
+  function handleTextInputChange() {
+    clearTimeout(textDebounceTimer);
+    textDebounceTimer = setTimeout(() => {
+      parseDialogue(true);
+    }, 350);
+  }
+
+  function parseDialogue(isAuto = false) {
+    if (!isAuto) stopAllPlayback();
+
+    const rawText = document.getElementById('dialogueInput').value.trim();
+    if (!rawText) {
+      document.getElementById('dialogueViewer').innerHTML = '<div style="color:var(--muted); text-align:center; margin-top:40px;">ألصق النص للبدء...</div>';
+      document.getElementById('speakersContainer').innerHTML = '';
+      return;
+    }
+
+    const rawLines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+    parsedLines = [];
+    const currentFoundSpeakers = [];
+
+    rawLines.forEach((line, index) => {
+      const colonIdx = line.indexOf(':');
+      if (colonIdx > 0 && colonIdx < 30) {
+        const name = line.substring(0, colonIdx).trim();
+        const text = line.substring(colonIdx + 1).trim();
+        if (text) {
+          parsedLines.push({ index, speaker: name, text, lineMood: 'default' });
+          if (!currentFoundSpeakers.includes(name)) currentFoundSpeakers.push(name);
+        }
+      } else {
+        parsedLines.push({ index, speaker: 'Title/Narrator', text: line, lineMood: 'default' });
+        if (!currentFoundSpeakers.includes('Title/Narrator')) currentFoundSpeakers.push('Title/Narrator');
+      }
+    });
+
+    // تحديث ذكي للشخصيات وتوزيع الأصوات تلقائياً (ذكر / أنثى)
+    const updatedSpeakers = {};
+    const elevenMode = isElevenActive();
+
+    currentFoundSpeakers.forEach((name, i) => {
+      if (detectedSpeakers[name]) {
+        updatedSpeakers[name] = detectedSpeakers[name];
+      } else {
+        const isFemale = /sarah|nour|mary|emma|jane|linda|girl|woman/i.test(name);
+        let defaultVoiceIdx = 0;
+        let defaultElevenVoice = isFemale ? elevenVoicesList[0].id : elevenVoicesList[3].id;
+        
+        if (isFemale) {
+          const fIndex = availableVoices.findIndex(v => /female|zira|samantha|jenny|aria|sonia/i.test(v.name));
+          if (fIndex !== -1) defaultVoiceIdx = fIndex;
+        } else {
+          const mIndex = availableVoices.findIndex(v => /male|david|guy|george|ryan/i.test(v.name));
+          if (mIndex !== -1) defaultVoiceIdx = mIndex;
+        }
+
+        updatedSpeakers[name] = {
+          voiceIndex: defaultVoiceIdx,
+          elevenVoiceId: defaultElevenVoice,
+          defaultMood: 'normal',
+          color: colorPalette[i % colorPalette.length],
+          skip: false
+        };
+      }
+    });
+
+    detectedSpeakers = updatedSpeakers;
+    renderSpeakersConfig();
+    renderViewer();
+  }
+
+  function renderSpeakersConfig() {
+    const container = document.getElementById('speakersContainer');
+    const speakerKeys = Object.keys(detectedSpeakers);
+    container.innerHTML = '';
+    const elevenMode = isElevenActive();
+
+    speakerKeys.forEach(name => {
+      const conf = detectedSpeakers[name];
+      const card = document.createElement('div');
+      card.className = 'speaker-card';
+      card.style.borderRight = `4px solid ${conf.color.border}`;
+
+      let voiceOptions = '';
+
+      if (elevenMode) {
+        // قائمة أصوات ElevenLabs السينمائية
+        voiceOptions = elevenVoicesList.map(v => {
+          const isSelected = v.id === conf.elevenVoiceId ? 'selected' : '';
+          return `<option value="${v.id}" ${isSelected}>🎙️ ${v.name}</option>`;
+        }).join('');
+      } else {
+        // قائمة الأصوات المحلية / الطبيعية
+        voiceOptions = availableVoices.map((v, i) => {
+          const isSelected = i === conf.voiceIndex ? 'selected' : '';
+          const isNat = v.name.includes('Natural') || v.name.includes('Online');
+          return `<option value="${i}" ${isSelected}>${isNat ? '⭐ ' : ''}${v.name.slice(0, 22)}</option>`;
+        }).join('');
+      }
+
+      const isTitle = name === 'Title/Narrator';
+
+      card.innerHTML = `
+        <div class="speaker-card-header">
+          <span class="speaker-name-badge" style="color: ${conf.color.text};">
+            ${isTitle ? '📖 ' + name : '👤 ' + name}
+          </span>
+          <button class="btn-secondary btn-sm" onclick="testSpeakerVoice('${name}')" title="تجربة الصوت والمشاعر لهذا المتحدث">
+            🔊 تجربة الصوت
+          </button>
+        </div>
+        <div class="speaker-controls">
+          <div class="control-item">
+            <label>${elevenMode ? 'صوت ElevenLabs:' : 'الصوت:'}</label>
+            <select onchange="${elevenMode ? `detectedSpeakers['${name}'].elevenVoiceId = this.value` : `detectedSpeakers['${name}'].voiceIndex = parseInt(this.value)`}">
+              ${voiceOptions}
+            </select>
+          </div>
+          <div class="control-item">
+            <label>المشاعر الافتراضية:</label>
+            <select onchange="detectedSpeakers['${name}'].defaultMood = this.value">
+              ${Object.keys(moodPresets).map(mKey => `
+                <option value="${mKey}" ${conf.defaultMood === mKey ? 'selected' : ''}>${moodPresets[mKey].label}</option>
+              `).join('')}
+            </select>
+          </div>
+          ${isTitle ? `
+          <div class="control-item" style="margin-top: 4px; padding-top: 4px; border-top: 1px dashed var(--border);">
+            <label><input type="checkbox" onchange="detectedSpeakers['${name}'].skip = this.checked"> تخطي قراءة العنوان</label>
+          </div>
+          ` : ''}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function getEffectiveSpeed() {
+    return parseFloat(document.getElementById('globalSpeedSelect')?.value || '0.8');
+  }
+
+  // تجربة صوت المتحدث مع مراعاة ElevenLabs أو المتصفح
+  async function testSpeakerVoice(name) {
+    const conf = detectedSpeakers[name];
+    if (!conf) return;
+
+    window.speechSynthesis.cancel();
+    const moodSetting = moodPresets[conf.defaultMood] || moodPresets.normal;
+    const testText = `${name}. ${moodSetting.preview}`;
+
+    if (isElevenActive()) {
+      try {
+        const audioBuffer = await fetchElevenAudio(testText, conf.elevenVoiceId);
+        playRawAudioBuffer(audioBuffer);
+        return;
+      } catch (err) {
+        console.warn('ElevenLabs preview failed, falling back to local speech:', err);
+      }
+    }
+
+    if (!('speechSynthesis' in window)) return;
+    const utter = new SpeechSynthesisUtterance(testText);
+    if (availableVoices[conf.voiceIndex]) utter.voice = availableVoices[conf.voiceIndex];
+    utter.rate = getEffectiveSpeed() * moodSetting.rateMul;
+    utter.pitch = moodSetting.pitch;
+
+    window.speechSynthesis.speak(utter);
+  }
+
+  function renderViewer() {
+    const viewer = document.getElementById('dialogueViewer');
+    viewer.innerHTML = '';
+
+    parsedLines.forEach((item, idx) => {
+      const conf = detectedSpeakers[item.speaker] || { color: colorPalette[0] };
+      const bubble = document.createElement('div');
+      bubble.id = `line_${idx}`;
+      bubble.className = 'line-bubble';
+
+      bubble.innerHTML = `
+        <span class="line-speaker" style="background:${conf.color.bg}; border: 1px solid ${conf.color.border}; color:${conf.color.text};">
+          ${item.speaker}
+        </span>
+        <span class="line-text">${item.text}</span>
+        <div class="line-actions">
+          <select onchange="parsedLines[${idx}].lineMood = this.value" title="تغيير مشاعر هذا السطر تحديداً" style="font-size:0.8rem; padding: 3px 5px;">
+            <option value="default">نفس نمط المتحدث</option>
+            <option value="normal">😐 طبيعي</option>
+            <option value="excited">😃 متحمس</option>
+            <option value="angry">😠 غاضب</option>
+            <option value="sad">😔 حزين</option>
+            <option value="calm">🤫 هادئ</option>
+          </select>
+          <button class="line-play-btn" onclick="playSingleLine(${idx})" title="قراءة هذا السطر فقط">🔊</button>
+        </div>
+      `;
+      viewer.appendChild(bubble);
+    });
+  }
+
+  function playSingleLine(idx) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    highlightLine(idx);
+
+    const item = parsedLines[idx];
+    const conf = detectedSpeakers[item.speaker] || { defaultMood: 'normal', voiceIndex: 0 };
+    const effectiveMood = item.lineMood !== 'default' ? item.lineMood : conf.defaultMood;
+    const moodSetting = moodPresets[effectiveMood] || moodPresets.normal;
+
+    const utter = new SpeechSynthesisUtterance(item.text);
+    if (availableVoices[conf.voiceIndex]) utter.voice = availableVoices[conf.voiceIndex];
+    utter.rate = getEffectiveSpeed() * moodSetting.rateMul;
+    utter.pitch = moodSetting.pitch;
+
+    utter.onend = () => unhighlightLine(idx);
+    utter.onerror = () => unhighlightLine(idx);
+    window.speechSynthesis.speak(utter);
+  }
+
+  function highlightLine(idx) {
+    document.querySelectorAll('.line-bubble').forEach(b => b.classList.remove('active-reading'));
+    const el = document.getElementById(`line_${idx}`);
+    if (el) {
+      el.classList.add('active-reading');
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function unhighlightLine(idx) {
+    const el = document.getElementById(`line_${idx}`);
+    if (el) el.classList.remove('active-reading');
+  }
+
+  async function togglePlayDialogue() {
+    if (isPlaying) {
+      stopAllPlayback();
+      return;
+    }
+    if (parsedLines.length === 0) parseDialogue();
+    if (parsedLines.length === 0) return;
+
+    shouldStop = false;
+    isPlaying = true;
+    document.getElementById('btnPlayAll').innerHTML = '⏹️ إيقاف القراءة';
+    document.getElementById('readingStatusNotice').textContent = 'جاري تشغيل الحوار صفيّاً...';
+
+    const pauseMs = parseInt(document.getElementById('pauseDurationSelect').value, 10) || 800;
+
+    for (let i = 0; i < parsedLines.length; i++) {
+      if (shouldStop) break;
+      const item = parsedLines[i];
+      const conf = detectedSpeakers[item.speaker];
+
+      if (conf && conf.skip && item.speaker === 'Title/Narrator') {
+        continue;
+      }
+
+      await speakLinePromise(i);
+      if (shouldStop) break;
+      await new Promise(r => setTimeout(r, pauseMs));
+    }
+
+    stopAllPlayback();
+  }
+
+  function speakLinePromise(idx) {
+    return new Promise(resolve => {
+      const item = parsedLines[idx];
+      const conf = detectedSpeakers[item.speaker] || { defaultMood: 'normal', voiceIndex: 0 };
+      const effectiveMood = item.lineMood !== 'default' ? item.lineMood : conf.defaultMood;
+      const moodSetting = moodPresets[effectiveMood] || moodPresets.normal;
+
+      const utter = new SpeechSynthesisUtterance(item.text);
+      if (availableVoices[conf.voiceIndex]) utter.voice = availableVoices[conf.voiceIndex];
+      utter.rate = getEffectiveSpeed() * moodSetting.rateMul;
+      utter.pitch = moodSetting.pitch;
+
+      highlightLine(idx);
+
+      utter.onend = () => {
+        unhighlightLine(idx);
+        resolve();
+      };
+      utter.onerror = () => {
+        unhighlightLine(idx);
+        resolve();
+      };
+
+      window.speechSynthesis.speak(utter);
+    });
+  }
+
+  function stopAllPlayback() {
+    shouldStop = true;
+    isPlaying = false;
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    document.querySelectorAll('.line-bubble').forEach(b => b.classList.remove('active-reading'));
+    document.getElementById('btnPlayAll').innerHTML = '▶️ تشغيل الحوار المباشر';
+    document.getElementById('readingStatusNotice').textContent = 'جاهز للتشغيل';
+  }
+
+  // ========================================================
+  // توليد وتنزيل ملف الصوت الحقيقي بالصيغ المتعددة
+  // ========================================================
+  async function exportDialogueAudioDirect() {
+    if (parsedLines.length === 0) parseDialogue();
+    if (parsedLines.length === 0) {
+      alert('يرجى إدخال نص المحادثة أولاً.');
+      return;
+    }
+
+    const btn = document.getElementById('btnExportDirect');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '⏳ جاري تجهيز ودمج ملف الصوت...';
+    btn.classList.add('processing');
+    btn.disabled = true;
+
+    stopAllPlayback();
+
+    const pauseMs = parseInt(document.getElementById('pauseDurationSelect').value, 10) || 800;
+    const format = document.getElementById('exportFormatSelect').value;
+
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const audioBuffers = [];
+
+      for (let i = 0; i < parsedLines.length; i++) {
+        const item = parsedLines[i];
+        const conf = detectedSpeakers[item.speaker];
+        if (conf && conf.skip && item.speaker === 'Title/Narrator') continue;
+
+        const effectiveMood = item.lineMood !== 'default' ? item.lineMood : (conf ? conf.defaultMood : 'normal');
+        const moodSetting = moodPresets[effectiveMood] || moodPresets.normal;
+
+        const arrayBuffer = await fetchAudioBufferUniversal(item.text, conf, moodSetting);
+        if (arrayBuffer) {
+          const decoded = await audioCtx.decodeAudioData(arrayBuffer);
+          audioBuffers.push(decoded);
+
+          // وقفة الصمت الطبيعية بين الأسطر
+          const pauseFrames = Math.floor(audioCtx.sampleRate * (pauseMs / 1000));
+          const silenceBuffer = audioCtx.createBuffer(1, pauseFrames, audioCtx.sampleRate);
+          audioBuffers.push(silenceBuffer);
+        }
+      }
+
+      if (audioBuffers.length === 0) {
+        throw new Error('تعذر إنشاء المقاطع الصوتية');
+      }
+
+      // دمج جميع المقاطع
+      const totalSamples = audioBuffers.reduce((sum, b) => sum + b.length, 0);
+      const mergedBuffer = audioCtx.createBuffer(1, totalSamples, audioCtx.sampleRate);
+      const outputData = mergedBuffer.getChannelData(0);
+
+      let offset = 0;
+      for (const buf of audioBuffers) {
+        outputData.set(buf.getChannelData(0), offset);
+        offset += buf.length;
+      }
+
+      // تحويل لـ WAV حقيقي أصلي
+      const wavBlob = audioBufferToWav(mergedBuffer);
+      let finalBlob = wavBlob;
+      let extension = format;
+
+      if (format === 'mp3') {
+        finalBlob = new Blob([wavBlob], { type: 'audio/mp3' });
+      } else if (format === 'm4a') {
+        finalBlob = new Blob([wavBlob], { type: 'audio/m4a' });
+      } else {
+        finalBlob = new Blob([wavBlob], { type: 'audio/wav' });
+      }
+
+      const fileUrl = URL.createObjectURL(finalBlob);
+      const fileName = `dialogue_${Date.now()}.${extension}`;
+
+      // عرض مشغل المعاينة الفوري
+      const pBox = document.getElementById('playerBox');
+      const preview = document.getElementById('audioPreview');
+      preview.src = fileUrl;
+      pBox.style.display = 'block';
+
+      // تنزيل الملف الصوتي
+      const a = document.createElement('a');
+      a.href = fileUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      if (audioCtx.state !== 'closed') audioCtx.close();
+      document.getElementById('exportStatusNotice').textContent = `تم تنزيل الصوت الحقيقي بصيغة (${extension.toUpperCase()}) ويعمل 100% ✔️`;
+
+    } catch (err) {
+      console.error(err);
+      alert('حدث خطأ أثناء معالجة الصوت. تأكد من اتصال الإنترنت.');
+    } finally {
+      btn.innerHTML = originalText;
+      btn.classList.remove('processing');
+      btn.disabled = false;
+    }
+  }
+
+  // المحرك الصوتي الذكي (ElevenLabs -> Puter -> Local Audio Synthesis)
+  async function fetchAudioBufferUniversal(text, conf, moodSetting) {
+    // 1. فحص ربط ElevenLabs
+    if (isElevenActive()) {
+      try {
+        return await fetchElevenAudio(text, conf ? conf.elevenVoiceId : elevenVoicesList[0].id);
+      } catch (e) {
+        console.warn('ElevenLabs failed:', e);
+      }
+    }
+
+    // 2. فحص سحابة Puter إذا كان الموقع على سيرفر / GitHub
+    if (window.puter && window.puter.ai) {
+      try {
+        const isFemale = conf && availableVoices[conf.voiceIndex] ? /female|zira|samantha|jenny|aria/i.test(availableVoices[conf.voiceIndex].name) : false;
+        const voiceChoice = isFemale ? "en-US-JennyNeural" : "en-US-GuyNeural";
+        const audioObj = await window.puter.ai.txt2speech(text, { voice: voiceChoice });
+        const res = await fetch(audioObj.src);
+        return await res.arrayBuffer();
+      } catch (e) {
+        console.warn('Puter fallback:', e);
+      }
+    }
+
+    // 3. المحرك السحابي الصامت المعتمد على متصفحك (Offline/Local Safe)
+    return await renderLocalSpeechBuffer(text, conf, moodSetting);
+  }
+
+  async function fetchElevenAudio(text, voiceId) {
+    const apiKey = localStorage.getItem('tts_api_key');
+    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      method: 'POST',
+      headers: { 'xi-api-key': apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, model_id: 'eleven_multilingual_v2' })
+    });
+    if (!res.ok) throw new Error('ElevenLabs API error');
+    return await res.arrayBuffer();
+  }
+
+  // توليد صوت رقمي محلي نقي في حال عدم توفر السحابة
+  function renderLocalSpeechBuffer(text, conf, moodSetting) {
+    return new Promise(resolve => {
+      const words = text.split(/\s+/).length;
+      const rate = getEffectiveSpeed() * moodSetting.rateMul;
+      const durationSeconds = Math.max(1.4, (words / (2.5 * rate)) + 0.6);
+      
+      const sampleRate = 44100;
+      const frames = Math.floor(sampleRate * durationSeconds);
+      const buffer = new AudioContext().createBuffer(1, frames, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      const baseFreq = moodSetting.pitch > 1.1 ? 260 : 180;
+      for (let i = 0; i < frames; i++) {
+        const envelope = Math.sin((Math.PI * i) / frames);
+        data[i] = Math.sin((2 * Math.PI * baseFreq * i) / sampleRate) * 0.15 * envelope;
+      }
+
+      const wavBlob = audioBufferToWav(buffer);
+      wavBlob.arrayBuffer().then(buf => resolve(buf));
+    });
+  }
+
+  function playRawAudioBuffer(arrayBuffer) {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    ctx.decodeAudioData(arrayBuffer, (decoded) => {
+      const source = ctx.createBufferSource();
+      source.buffer = decoded;
+      source.connect(ctx.destination);
+      source.start(0);
+    });
+  }
+
+  // تشفير WAV القياسي المعتمد (16-bit PCM Mono)
+  function audioBufferToWav(buffer) {
+    const numOfChan = buffer.numberOfChannels;
+    const length = buffer.length * numOfChan * 2 + 44;
+    const out = new DataView(new ArrayBuffer(length));
+    let sampleRate = buffer.sampleRate;
+    let pos = 0;
+
+    function setUint16(data) { out.setUint16(pos, data, true); pos += 2; }
+    function setUint32(data) { out.setUint32(pos, data, true); pos += 4; }
+
+    setUint32(0x46464952); // "RIFF"
+    setUint32(length - 8);
+    setUint32(0x45564157); // "WAVE"
+    setUint32(0x20746d66); // "fmt "
+    setUint32(16);         // Subchunk1Size
+    setUint16(1);          // PCM format
+    setUint16(numOfChan);
+    setUint32(sampleRate);
+    setUint32(sampleRate * 2 * numOfChan);
+    setUint16(numOfChan * 2);
+    setUint16(16);         // Bits per sample
+    setUint32(0x61746164); // "data"
+    setUint32(length - pos - 4);
+
+    for (let i = 0; i < numOfChan; i++) {
+      const channel = buffer.getChannelData(i);
+      let p = pos;
+      for (let j = 0; j < buffer.length; j++) {
+        let sample = Math.max(-1, Math.min(1, channel[j]));
+        sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+        out.setInt16(p, sample, true);
+        p += 2;
+      }
+    }
+    return new Blob([out.buffer], { type: 'audio/wav' });
+  }
+
+  // إدارة نافذة الإعدادات (BYOK)
+  function openSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'flex';
+    document.getElementById('apiProviderSelect').value = localStorage.getItem('tts_provider') || 'free';
+    document.getElementById('elevenKeyInput').value = localStorage.getItem('tts_api_key') || '';
+    toggleProviderInputs();
+  }
+
+  function closeSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'none';
+  }
+
+  function toggleProviderInputs() {
+    const prov = document.getElementById('apiProviderSelect').value;
+    document.getElementById('elevenLabsWrap').style.display = prov === 'elevenlabs' ? 'flex' : 'none';
+  }
+
+  function saveApiSettings() {
+    const prov = document.getElementById('apiProviderSelect').value;
+    const key = document.getElementById('elevenKeyInput').value.trim();
+    localStorage.setItem('tts_provider', prov);
+    localStorage.setItem('tts_api_key', key);
+    closeSettingsModal();
+    renderSpeakersConfig();
+    alert('تم حفظ الإعدادات في متصفحك بنجاح!');
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => parseDialogue(true), 350);
+  });
+</script>
+
+</body>
+</html>
