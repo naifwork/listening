@@ -13,6 +13,9 @@
   
   <!-- FontAwesome للأيقونات -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- محرك تشفير MP3 المحلي الاحتياطي (LameJS) المضمون 100% بدون أي سيرفر -->
+  <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -100,14 +103,20 @@
   <div class="max-w-5xl mx-auto space-y-6">
 
     <!-- 1. ترويسة الموقع -->
-    <header class="text-center space-y-2 py-4">
+    <header class="text-center space-y-3 py-4">
       <div class="inline-flex items-center gap-3 bg-emerald-900/60 border border-emerald-500/30 px-5 py-2 rounded-full shadow-lg">
         <i class="fa-solid fa-microphone-lines text-emerald-400 text-2xl"></i>
         <h1 class="text-2xl sm:text-3xl font-black tracking-wide text-white">استوديو نصوص الاستماع</h1>
       </div>
-      <p class="text-emerald-300/80 text-sm sm:text-base font-almarai max-w-xl mx-auto">
+      <p class="text-emerald-300/80 text-sm sm:text-base max-w-xl mx-auto">
         تحليل ذكي للمحادثات، تصنيف الرواة والمتحدثين تلقائياً، والتشغيل بأصوات طبيعية عالية النقاء
       </p>
+      
+      <!-- شريط التنبيه المخصص لمتصفح Edge على الكمبيوتر -->
+      <div class="inline-flex items-center gap-2 bg-emerald-950/80 border border-amber-400/40 text-amber-200/90 text-xs sm:text-sm px-4 py-1.5 rounded-full shadow-md backdrop-blur-sm">
+        <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xs"></i>
+        <span><strong>تنبيه:</strong> خاص بمتصفح Edge على جهاز الكمبيوتر</span>
+      </div>
     </header>
 
     <!-- 2. منطقة إدخال النص الرئيسي -->
@@ -126,7 +135,7 @@
         class="w-full bg-emerald-950/90 border border-emerald-700/60 rounded-xl p-4 text-emerald-50 font-mono text-sm sm:text-base focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 outline-none transition resize-y text-start"
         placeholder="الصق الحوار هنا..."></textarea>
       
-      <p class="text-xs text-emerald-400/70 mt-2 font-almarai flex items-center gap-1.5">
+      <p class="text-xs text-emerald-400/70 mt-2 flex items-center gap-1.5">
         <i class="fa-solid fa-circle-info"></i>
         الأسطر التي تحتوي على (اسم:) تصنف كمتحدث، والأسطر الأخرى تصنف تلقائياً كراوي/عنوان دون نطق اسم الشخصية.
       </p>
@@ -161,7 +170,7 @@
       </div>
     </section>
 
-    <!-- 4. كروت المتحدثين والراوي (ديناميكي بدون حد) -->
+    <!-- 4. كروت المتحدثين والراوي -->
     <section class="space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="font-bold text-emerald-200 text-lg flex items-center gap-2">
@@ -169,17 +178,17 @@
           تخصيص الأصوات المكتشفة
         </h2>
         <span class="text-xs text-emerald-400/80 bg-emerald-900/80 border border-emerald-700/40 px-3 py-1 rounded-lg">
-          يتم سرد الأصوات بأسمائها الرسمية في متصفحك
+          أصوات طبيعية عالية الجودة (30 صوتاً رسمياً)
         </span>
       </div>
 
       <!-- شبكة الكروت -->
       <div id="speakersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- سيتم توليد الكروت هنا ديناميكياً بواسطة جافاسكربت -->
+        <!-- توليد ديناميكي -->
       </div>
     </section>
 
-    <!-- 5. حالة التشغيل الفعلي (Live status toast) -->
+    <!-- 5. حالة التشغيل الفعلي -->
     <div id="statusBox" class="hidden bg-emerald-900 border border-emerald-400/40 p-4 rounded-xl flex items-center gap-3 shadow-xl animate-pulse">
       <i class="fa-solid fa-volume-high text-emerald-300 text-xl"></i>
       <div class="flex-1 overflow-hidden">
@@ -205,42 +214,283 @@
 
       <div class="border-t border-emerald-850 my-2"></div>
 
-      <!-- أزرار التحميل والتسجيل -->
-      <div class="flex flex-wrap items-center justify-center gap-4">
-        <!-- زر التحميل الأساسي النقي MP3 -->
-        <button id="btnDownloadAudio" class="flex-1 min-w-[240px] bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-3 px-5 rounded-xl border border-emerald-400/50 shadow transition flex items-center justify-center gap-2 active:scale-95 text-sm sm:text-base">
-          <i class="fa-solid fa-bolt text-yellow-300"></i>
-          تحميل ملف MP3 نقي ومكتمل (سيرفر Edge)
-        </button>
+      <!-- أزرار التحميل والتصدير المتعددة للتجربة -->
+      <div class="space-y-3">
+        <div class="text-xs font-bold text-emerald-300 border-b border-emerald-800 pb-1">
+          <i class="fa-solid fa-flask text-yellow-400 ml-1"></i> اختر طريقة التصدير أو التسجيل الأنسب لجهازك:
+        </div>
 
-        <!-- زر التسجيل الاحتياطي WebM من صوت النظام الداخلي -->
-        <button id="btnRecordWebM" class="flex-1 min-w-[240px] bg-emerald-900/90 hover:bg-emerald-850 text-emerald-200 font-bold py-3 px-5 rounded-xl border border-emerald-700/60 transition flex items-center justify-center gap-2 active:scale-95 text-sm sm:text-base">
-          <i class="fa-solid fa-desktop text-cyan-400"></i>
-          تسجيل صوت النظام/التبويب (WebM محلي)
-        </button>
+        <!-- تم تنظيف خيارات التصدير 1 و 2 و 3 والاعتماد على التسجيل الداخلي للتبويب -->
+
+        <!-- أزرار تسجيل صوت التبويب الداخلي فقط بدون مايك -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+          <!-- 4. تبويب داخلي MP3 -->
+          <button id="btnRecordTabMp3" type="button" class="bg-purple-800 hover:bg-purple-700 text-purple-100 font-bold py-2.5 px-3 rounded-xl border border-purple-500/40 shadow transition flex items-center justify-center gap-1.5 active:scale-95 text-xs">
+            <i class="fa-solid fa-compact-disc text-fuchsia-300"></i>
+            4. تسجيل التبويب فقط إلى MP3
+          </button>
+
+          <!-- 5. تبويب داخلي WAV -->
+          <button id="btnRecordTabWav" type="button" class="bg-indigo-800 hover:bg-indigo-700 text-indigo-100 font-bold py-2.5 px-3 rounded-xl border border-indigo-500/40 shadow transition flex items-center justify-center gap-1.5 active:scale-95 text-xs">
+            <i class="fa-solid fa-file-audio text-amber-300"></i>
+            5. تسجيل التبويب فقط إلى WAV خام
+          </button>
+
+          <!-- 6. تبويب داخلي WebM -->
+          <button id="btnRecordTabWebm" type="button" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 px-3 rounded-xl border border-slate-600 shadow transition flex items-center justify-center gap-1.5 active:scale-95 text-xs">
+            <i class="fa-solid fa-desktop text-cyan-400"></i>
+            6. تسجيل التبويب صوت WebM
+          </button>
+        </div>
+
+        <!-- زر تفريغ النص كملف سكريبت -->
+        <div class="flex justify-center pt-1">
+          <button id="btnDownloadScriptTxt" type="button" class="text-xs bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 font-bold py-2 px-4 rounded-lg border border-emerald-700/50 transition flex items-center gap-2">
+            <i class="fa-solid fa-file-lines text-emerald-400"></i>
+            تصدير نص السيناريو كملف (TXT)
+          </button>
+        </div>
       </div>
 
-      <!-- إشعار حالة التصدير والتسجيل -->
-      <div id="exportStatus" class="hidden text-center text-xs text-emerald-300 font-almarai py-1"></div>
+      <!-- إشعار حالة التصدير -->
+      <div id="exportStatus" class="hidden text-center text-xs text-emerald-300 py-1"></div>
     </section>
+
+    <!-- التوقيع الزجاجي بالأسفل -->
+    <footer class="flex justify-center items-center pt-2 pb-6">
+      <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/15 backdrop-blur-md shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:bg-white/10 hover:border-emerald-400/40 transition-all duration-300 select-none">
+        <span class="text-xs sm:text-sm tracking-wider font-semibold text-emerald-100/90">Made with</span>
+        <i class="fa-solid fa-bolt text-yellow-400 text-sm animate-pulse"></i>
+        <span class="text-xs sm:text-sm tracking-wider font-bold text-white">by Naif</span>
+      </div>
+    </footer>
 
   </div>
 
   <script>
-    // --- البيانات والحالة العامة للتطبيق ---
-    const defaultSampleText = `Title: Ordering at the Restaurant
-[Scene: At a quiet restaurant during lunchtime]
-Waiter: Welcome! Are you ready to order?
-Fahad: Yes, please. I'd like the grilled chicken.
-Waiter: Sure, anything to drink with that?
-Fahad: Just water, thanks.`;
+    // --- قائمة الـ 30 صوتاً الطبيعية الرسمية (أمريكي وبريطاني) الثابتة للكمبيوتر والجوال ---
+    const EDGE_VOICE_CATALOG = [
+      // 10 أصوات نسائية أمريكية
+      { id: 'en-US-JennyNeural', label: 'Jenny (US Female)' },
+      { id: 'en-US-AriaNeural', label: 'Aria (US Female)' },
+      { id: 'en-US-MichelleNeural', label: 'Michelle (US Female)' },
+      { id: 'en-US-AvaNeural', label: 'Ava (US Female)' },
+      { id: 'en-US-EmmaNeural', label: 'Emma (US Female)' },
+      { id: 'en-US-AnaNeural', label: 'Ana (US Kid Female)' },
+      { id: 'en-US-AmandaNeural', label: 'Amanda (US Female)' },
+      { id: 'en-US-AshleyNeural', label: 'Ashley (US Female)' },
+      { id: 'en-US-CoraNeural', label: 'Cora (US Female)' },
+      { id: 'en-US-ElizabethNeural', label: 'Elizabeth (US Female)' },
+      
+      // 10 أصوات رجالية أمريكية
+      { id: 'en-US-GuyNeural', label: 'Guy (US Male)' },
+      { id: 'en-US-BrianNeural', label: 'Brian (US Male)' },
+      { id: 'en-US-ChristopherNeural', label: 'Christopher (US Male)' },
+      { id: 'en-US-EricNeural', label: 'Eric (US Male)' },
+      { id: 'en-US-DavisNeural', label: 'Davis (US Male)' },
+      { id: 'en-US-JasonNeural', label: 'Jason (US Male)' },
+      { id: 'en-US-TonyNeural', label: 'Tony (US Male)' },
+      { id: 'en-US-BrandonNeural', label: 'Brandon (US Male)' },
+      { id: 'en-US-AndrewNeural', label: 'Andrew (US Male)' },
+      { id: 'en-US-RogerNeural', label: 'Roger (US Male)' },
+
+      // 5 أصوات نسائية بريطانية
+      { id: 'en-GB-SoniaNeural', label: 'Sonia (UK Female)' },
+      { id: 'en-GB-LibbyNeural', label: 'Libby (UK Female)' },
+      { id: 'en-GB-MaisieNeural', label: 'Maisie (UK Female)' },
+      { id: 'en-GB-MiaNeural', label: 'Mia (UK Female)' },
+      { id: 'en-GB-BellaNeural', label: 'Bella (UK Female)' },
+
+      // 5 أصوات رجالية بريطانية
+      { id: 'en-GB-RyanNeural', label: 'Ryan (UK Male)' },
+      { id: 'en-GB-AlfieNeural', label: 'Alfie (UK Male)' },
+      { id: 'en-GB-ThomasNeural', label: 'Thomas (UK Male)' },
+      { id: 'en-GB-OliverNeural', label: 'Oliver (UK Male)' },
+      { id: 'en-GB-NoahNeural', label: 'Noah (UK Male)' }
+    ];
+
+    // نص المحادثة النموذجي
+    const defaultSampleText = `Title: Planning the Weekend Project
+[Scene: In the school library after class]
+Fahad: Hey Ryan, did you start working on our science project yet?
+Ryan: Not yet, Fahad. I was planning to gather the materials this evening.
+Fahad: That sounds great. Do you want me to bring the presentation slides tomorrow?
+Ryan: Yes, please! That would save us a lot of time.
+Fahad: Perfect, let us meet here right after school.
+Ryan: Deal! See you tomorrow morning.`;
 
     let systemVoices = [];
     let parsedLines = [];
     let detectedSpeakers = new Set();
-    let speakerConfigs = {}; // حفظ إعدادات الصوت والسرعة لكل متحدث
+    let speakerConfigs = {};
     let isPlaying = false;
     let stopRequested = false;
+
+    // --- قائمة الـ 20 مؤثراً صوتياً والمحرك الصوتي العام ---
+    const SFX_LIST = [
+      { id: 'none', label: 'بدون مؤثر صوتي' },
+      { id: 'door_bell', label: '🔔 1. جرس الباب' },
+      { id: 'door_knock', label: '🚪 2. نقر باب خشبي' },
+      { id: 'ready_chime', label: '✨ 3. رنين الاستعداد' },
+      { id: 'gentle_ping', label: '💬 4. إشعار لطيف' },
+      { id: 'bubble_pop', label: '🫧 5. فقاعة ماء' },
+      { id: 'water_drop', label: '💧 6. قطرة ندى' },
+      { id: 'cute_whistle', label: '🎵 7. صفارة لطيفة' },
+      { id: 'camera_snap', label: '📸 8. لقطة كاميرا' },
+      { id: 'service_bell', label: '🛎️ 9. جرس ردهة الفندق' },
+      { id: 'success_chord', label: '🎉 10. نغمة النجاح' },
+      { id: 'short_applause', label: '👏 11. تصفيق خفيف' },
+      { id: 'phone_tap', label: '📱 12. نقرة هاتف' },
+      { id: 'warm_harp', label: '🎶 13. هارب دافئ' },
+      { id: 'ambient_tone', label: '🎧 14. نغمة هادئة' },
+      { id: 'power_up', label: '⚡ 15. طاقة وحيوية' },
+      { id: 'glass_clink', label: '🥂 16. رنين زجاج خفيف' },
+      { id: 'chat_start', label: '🗣️ 17. بدء حوار تعليمي' },
+      { id: 'clock_tick', label: '⏱️ 18. دقة ساعة' },
+      { id: 'retro_coin', label: '🪙 19. نقطة تشجيعية' },
+      { id: 'outro_chime', label: '🌟 20. رنين ختامي' }
+    ];
+
+    function buildSfxOptions(selectedId) {
+      return SFX_LIST.map(s => {
+        const isSelected = (s.id === selectedId) ? 'selected' : '';
+        return `<option value="${s.id}" ${isSelected}>${s.label}</option>`;
+      }).join('');
+    }
+
+    let sharedAudioCtx = null;
+    function getAudioCtx() {
+      if (!sharedAudioCtx) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        sharedAudioCtx = new AudioCtx();
+      }
+      if (sharedAudioCtx.state === 'suspended') {
+        sharedAudioCtx.resume();
+      }
+      return sharedAudioCtx;
+    }
+
+    function playSfxEffect(effectId) {
+      if (!effectId || effectId === 'none') return Promise.resolve();
+      return new Promise((resolve) => {
+        try {
+          const ctx = getAudioCtx();
+          const now = ctx.currentTime;
+
+          const makeTone = (freq, type, start, dur, gainVal, endFreq) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, start);
+            if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, start + dur);
+            gain.gain.setValueAtTime(gainVal, start);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(start);
+            osc.stop(start + dur);
+          };
+
+          switch (effectId) {
+            case 'door_bell':
+              makeTone(659.25, 'sine', now, 0.45, 0.4);
+              makeTone(523.25, 'sine', now + 0.35, 0.7, 0.4);
+              setTimeout(resolve, 1100);
+              break;
+            case 'door_knock':
+              for (let k = 0; k < 3; k++) makeTone(140 - k * 10, 'triangle', now + (k * 0.14), 0.09, 0.5);
+              setTimeout(resolve, 550);
+              break;
+            case 'ready_chime':
+              makeTone(440, 'triangle', now, 0.25, 0.3);
+              makeTone(554.37, 'triangle', now + 0.15, 0.25, 0.3);
+              makeTone(659.25, 'triangle', now + 0.3, 0.5, 0.35);
+              setTimeout(resolve, 850);
+              break;
+            case 'gentle_ping':
+              makeTone(880, 'sine', now, 0.35, 0.35);
+              setTimeout(resolve, 400);
+              break;
+            case 'bubble_pop':
+              makeTone(350, 'sine', now, 0.12, 0.4, 850);
+              setTimeout(resolve, 180);
+              break;
+            case 'water_drop':
+              makeTone(600, 'sine', now, 0.15, 0.35, 1200);
+              setTimeout(resolve, 200);
+              break;
+            case 'cute_whistle':
+              makeTone(900, 'sine', now, 0.15, 0.25, 1400);
+              makeTone(1400, 'sine', now + 0.15, 0.2, 0.25, 1100);
+              setTimeout(resolve, 400);
+              break;
+            case 'camera_snap':
+              makeTone(120, 'square', now, 0.04, 0.3);
+              makeTone(180, 'square', now + 0.06, 0.07, 0.3);
+              setTimeout(resolve, 200);
+              break;
+            case 'service_bell':
+              makeTone(1760, 'sine', now, 0.8, 0.4);
+              setTimeout(resolve, 850);
+              break;
+            case 'success_chord':
+              makeTone(523.25, 'sine', now, 0.4, 0.25);
+              makeTone(659.25, 'sine', now + 0.1, 0.4, 0.25);
+              makeTone(783.99, 'sine', now + 0.2, 0.4, 0.25);
+              makeTone(1046.50, 'sine', now + 0.3, 0.6, 0.3);
+              setTimeout(resolve, 950);
+              break;
+            case 'short_applause':
+              for (let i = 0; i < 6; i++) makeTone(220 + (i % 2) * 80, 'triangle', now + (i * 0.07), 0.05, 0.2);
+              setTimeout(resolve, 500);
+              break;
+            case 'phone_tap':
+              makeTone(700, 'triangle', now, 0.05, 0.3);
+              setTimeout(resolve, 100);
+              break;
+            case 'warm_harp':
+              [392, 440, 523, 587, 659].forEach((f, idx) => makeTone(f, 'sine', now + (idx * 0.08), 0.4, 0.2));
+              setTimeout(resolve, 800);
+              break;
+            case 'ambient_tone':
+              makeTone(523.25, 'sine', now, 0.6, 0.25);
+              setTimeout(resolve, 650);
+              break;
+            case 'power_up':
+              makeTone(200, 'triangle', now, 0.35, 0.3, 600);
+              setTimeout(resolve, 400);
+              break;
+            case 'glass_clink':
+              makeTone(2400, 'sine', now, 0.45, 0.3);
+              setTimeout(resolve, 500);
+              break;
+            case 'chat_start':
+              makeTone(440, 'sine', now, 0.15, 0.25);
+              makeTone(880, 'sine', now + 0.12, 0.25, 0.25);
+              setTimeout(resolve, 420);
+              break;
+            case 'clock_tick':
+              makeTone(1000, 'triangle', now, 0.03, 0.3);
+              setTimeout(resolve, 120);
+              break;
+            case 'retro_coin':
+              makeTone(987.77, 'sine', now, 0.1, 0.3);
+              makeTone(1318.51, 'sine', now + 0.08, 0.35, 0.3);
+              setTimeout(resolve, 450);
+              break;
+            case 'outro_chime':
+              makeTone(1046.50, 'sine', now, 0.4, 0.25);
+              makeTone(783.99, 'sine', now + 0.18, 0.5, 0.3);
+              setTimeout(resolve, 750);
+              break;
+            default:
+              resolve();
+          }
+        } catch(e) {
+          resolve();
+        }
+      });
+    }
 
     // عناصر واجهة المستخدم
     const scriptTextArea = document.getElementById('scriptText');
@@ -262,11 +512,15 @@ Fahad: Just water, thanks.`;
     // وضع النص النموذجي المبدئي
     scriptTextArea.value = defaultSampleText;
 
-    // --- تحميل وتحديث الأصوات من المتصفح بأسمائها الأصلية ---
+    // إخفاء زر تسجيل الشاشة تلقائياً إذا كان المستخدم يتصفح من هاتف
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      if (btnRecordWebM) btnRecordWebM.style.display = 'none';
+    }
+
     function populateVoices() {
-      systemVoices = window.speechSynthesis.getVoices();
-      
-      // إعادة إنشاء الكروت للحفاظ على قائمة الأصوات كاملة ودقيقة
+      if ('speechSynthesis' in window) {
+        systemVoices = window.speechSynthesis.getVoices();
+      }
       renderSpeakerCards();
     }
 
@@ -275,7 +529,7 @@ Fahad: Just water, thanks.`;
       populateVoices();
     }
 
-    // ضبط اتجاه مربع النص ديناميكياً بناءً على الحرف الأول
+    // ضبط اتجاه مربع النص ديناميكياً
     function updateTextDirection() {
       const val = scriptTextArea.value.trim();
       if (!val) return;
@@ -285,7 +539,7 @@ Fahad: Just water, thanks.`;
       scriptTextArea.style.textAlign = isArabic ? 'right' : 'left';
     }
 
-    // --- تحليل النص بذكاء واستخراج المتحدثين والرواة دون أي تكرار ---
+    // --- تحليل النص الذكي: عزل السطور الوصفية ومنع تكرار الشخصيات نهائياً ---
     function parseScript() {
       updateTextDirection();
       const rawText = scriptTextArea.value;
@@ -298,7 +552,7 @@ Fahad: Just water, thanks.`;
         const trimmed = line.trim();
         if (!trimmed) return;
 
-        // السطور التي تبدأ بأقواس مربعة أو عناوين وصفية تحال مباشرة إلى الراوي
+        // 1. السطور المحاطة بأقواس مربعة أو عناوين المشاهد تحال مباشرة للراوي
         const isBracketed = trimmed.startsWith('[') || trimmed.startsWith('(');
         const isTitleOrScene = /^(title|scene):/i.test(trimmed);
 
@@ -316,13 +570,12 @@ Fahad: Just water, thanks.`;
           return;
         }
 
-        // فحص المتحدثين الحقيقيين (مثل Fahad: أو Ryan:)
+        // 2. فحص متحدثي الحوار الحقيقيين (مثل Fahad: أو Ryan:)
         const colonIndex = trimmed.indexOf(':');
         if (colonIndex > 0) {
           const possibleSpeaker = trimmed.substring(0, colonIndex).trim();
           const speechContent = trimmed.substring(colonIndex + 1).trim();
 
-          // لا يتجاوز 3 كلمات ومعه كلام فعلي
           if (possibleSpeaker.split(/\s+/).length <= 3 && speechContent.length > 0) {
             currentFoundSpeakers.add(possibleSpeaker);
             parsedLines.push({
@@ -335,7 +588,7 @@ Fahad: Just water, thanks.`;
           }
         }
 
-        // أي سطر آخر يحال إلى الراوي
+        // 3. أي سطر آخر يحال إلى الراوي
         parsedLines.push({
           type: 'narrator',
           speaker: 'الراوي / العنوان',
@@ -350,31 +603,53 @@ Fahad: Just water, thanks.`;
       renderSpeakerCards();
     }
 
+    // بناء قائمة الأصوات الـ 30 الموحدة
+    function buildVoiceOptions(selectedVoiceId) {
+      return EDGE_VOICE_CATALOG.map(v => {
+        const isSelected = (v.id === selectedVoiceId) ? 'selected' : '';
+        return `<option value="${v.id}" ${isSelected}>${v.label}</option>`;
+      }).join('');
+    }
+
     // --- رسم كروت المتحدثين والراوي ---
     function renderSpeakerCards() {
-      // الحفاظ على الإعدادات السابقة وتأمين الإعداد للراوي
+      // محرك المؤثرات الصوتية متاح الآن في النطاق العام
+
       if (!speakerConfigs['__narrator__']) {
         speakerConfigs['__narrator__'] = {
           enabled: true,
-          voiceURI: '',
-          speed: 1.0
+          voiceId: 'en-US-BrianNeural',
+          speed: 1.0,
+          sfx: 'door_bell',
+          sfxTiming: 'before' // 'before' | 'after' | 'none'
         };
       }
 
-      // تجهيز إعدادات المتحدثين الجدد
+      // توزيع أصوات افتراضية مميزة على المتحدثين الجدد
+      const defaultVoicePalette = [
+        'en-US-JennyNeural',
+        'en-GB-RyanNeural',
+        'en-US-GuyNeural',
+        'en-GB-SoniaNeural',
+        'en-US-AriaNeural'
+      ];
+      let paletteIdx = 0;
+
       detectedSpeakers.forEach(spk => {
         if (!speakerConfigs[spk]) {
           speakerConfigs[spk] = {
-            voiceURI: '',
-            speed: 1.0
+            voiceId: defaultVoicePalette[paletteIdx % defaultVoicePalette.length],
+            speed: 1.0,
+            sfx: 'none',
+            sfxTiming: 'before'
           };
+          paletteIdx++;
         }
       });
 
-      // تنظيف الحاوية
       speakersContainer.innerHTML = '';
 
-      // 1. كرت الراوي / العناوين والفقرات الوصفية
+      // 1. كرت الراوي والعناوين مع مؤثراته الخاصة
       const narratorConfig = speakerConfigs['__narrator__'];
       const narratorCard = document.createElement('div');
       narratorCard.className = "bg-emerald-900/70 border border-emerald-600/50 rounded-xl p-4 glow-box space-y-3 relative overflow-hidden";
@@ -392,10 +667,31 @@ Fahad: Just water, thanks.`;
         </div>
 
         <div class="space-y-1">
-          <label class="text-xs text-emerald-300 font-semibold block">الصوت الأصلي المختار:</label>
+          <label class="text-xs text-emerald-300 font-semibold block">الصوت المختار:</label>
           <select id="narratorVoice" class="w-full bg-emerald-950 border border-emerald-700/80 rounded-lg p-2 text-xs text-emerald-100 outline-none focus:border-emerald-400">
-            ${buildVoiceOptions(narratorConfig.voiceURI)}
+            ${buildVoiceOptions(narratorConfig.voiceId)}
           </select>
+        </div>
+
+        <!-- قسم المؤثرات الصوتية للراوي -->
+        <div class="bg-emerald-950/60 border border-emerald-800/80 p-2.5 rounded-lg space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> المؤثر الصوتي للراوي:
+            </label>
+            <button type="button" id="btnPreviewNarratorSfx" class="text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40 transition flex items-center gap-1">
+              <i class="fa-solid fa-play text-[9px]"></i> تجربة المؤثر
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <select id="narratorSfx" class="w-full bg-emerald-950 border border-emerald-700/80 rounded-lg p-1.5 text-xs text-emerald-100 outline-none">
+              ${buildSfxOptions(narratorConfig.sfx || 'none')}
+            </select>
+            <select id="narratorSfxTiming" class="w-full bg-emerald-950 border border-emerald-700/80 rounded-lg p-1.5 text-xs text-emerald-100 outline-none">
+              <option value="before" ${narratorConfig.sfxTiming === 'before' ? 'selected' : ''}>تشغيل قبل النطق</option>
+              <option value="after" ${narratorConfig.sfxTiming === 'after' ? 'selected' : ''}>تشغيل بعد النطق</option>
+            </select>
+          </div>
         </div>
 
         <div class="space-y-1">
@@ -408,18 +704,28 @@ Fahad: Just water, thanks.`;
 
         <button id="btnSampleNarrator" class="w-full bg-emerald-800/80 hover:bg-emerald-700 text-emerald-200 hover:text-white py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 border border-emerald-600/30">
           <i class="fa-solid fa-volume-high"></i>
-          سماع عينة
+          سماع عينة الصوت
         </button>
       `;
       speakersContainer.appendChild(narratorCard);
 
-      // ربط أحداث كرت الراوي
+      // ربط أحداث الراوي
       narratorCard.querySelector('#narratorToggle').addEventListener('change', (e) => {
         narratorConfig.enabled = e.target.checked;
       });
       narratorCard.querySelector('#narratorVoice').addEventListener('change', (e) => {
-        narratorConfig.voiceURI = e.target.value;
+        narratorConfig.voiceId = e.target.value;
       });
+      narratorCard.querySelector('#narratorSfx').addEventListener('change', (e) => {
+        narratorConfig.sfx = e.target.value;
+      });
+      narratorCard.querySelector('#narratorSfxTiming').addEventListener('change', (e) => {
+        narratorConfig.sfxTiming = e.target.value;
+      });
+      narratorCard.querySelector('#btnPreviewNarratorSfx').addEventListener('click', () => {
+        playSfxEffect(narratorConfig.sfx);
+      });
+
       const narratorSpeedSlider = narratorCard.querySelector('#narratorSpeed');
       const narratorSpeedValText = narratorCard.querySelector('#narratorSpeedVal');
       narratorSpeedSlider.addEventListener('input', (e) => {
@@ -428,10 +734,10 @@ Fahad: Just water, thanks.`;
       });
       narratorCard.querySelector('#btnSampleNarrator').addEventListener('click', () => {
         const sampleLine = parsedLines.find(l => l.type === 'narrator');
-        speakSingleLine(sampleLine ? sampleLine.text : 'هذا نموذج صوتي لنطق العناوين والفقرات الوصفية', narratorConfig);
+        speakPreviewLine(sampleLine ? sampleLine.text : 'Title: Planning the Weekend Project', narratorConfig);
       });
 
-      // 2. توليد كروت المتحدثين المكتشفين
+      // 2. كروت المتحدثين الحقيقيين المكتشفين مع مؤثراتهم المخصصة
       let speakerIndex = 1;
       detectedSpeakers.forEach(spk => {
         const config = speakerConfigs[spk];
@@ -446,10 +752,31 @@ Fahad: Just water, thanks.`;
           </div>
 
           <div class="space-y-1">
-            <label class="text-xs text-emerald-300 font-semibold block">الصوت المخصص (الاسم الأصلي):</label>
+            <label class="text-xs text-emerald-300 font-semibold block">الصوت المخصص:</label>
             <select class="speaker-voice w-full bg-emerald-950 border border-emerald-700/80 rounded-lg p-2 text-xs text-emerald-100 outline-none focus:border-emerald-400">
-              ${buildVoiceOptions(config.voiceURI)}
+              ${buildVoiceOptions(config.voiceId)}
             </select>
+          </div>
+
+          <!-- قسم المؤثرات الصوتية للشخصية -->
+          <div class="bg-emerald-950/60 border border-emerald-800/80 p-2.5 rounded-lg space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> مؤثر صوتي مخصص:
+              </label>
+              <button type="button" class="btn-preview-speaker-sfx text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 px-2 py-0.5 rounded border border-amber-500/40 transition flex items-center gap-1">
+                <i class="fa-solid fa-play text-[9px]"></i> تجربة المؤثر
+              </button>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <select class="speaker-sfx w-full bg-emerald-950 border border-emerald-700/80 rounded-lg p-1.5 text-xs text-emerald-100 outline-none">
+                ${buildSfxOptions(config.sfx || 'none')}
+              </select>
+              <select class="speaker-sfx-timing w-full bg-emerald-950 border border-emerald-700/80 rounded-lg p-1.5 text-xs text-emerald-100 outline-none">
+                <option value="before" ${config.sfxTiming === 'before' ? 'selected' : ''}>تشغيل قبل النطق</option>
+                <option value="after" ${config.sfxTiming === 'after' ? 'selected' : ''}>تشغيل بعد النطق</option>
+              </select>
+            </div>
           </div>
 
           <div class="space-y-1">
@@ -460,17 +787,29 @@ Fahad: Just water, thanks.`;
             <input type="range" class="speaker-speed w-full" min="0.5" max="1.5" step="0.05" value="${config.speed}">
           </div>
 
-          <!-- زر واحد فقط لمعاينة العينة -->
           <button class="btn-sample-speaker w-full bg-emerald-800/80 hover:bg-emerald-700 text-emerald-200 hover:text-white py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 border border-emerald-600/30">
             <i class="fa-solid fa-volume-high"></i>
             سماع عينة من النص
           </button>
         `;
 
-        // ربط الأحداث
         const voiceSelect = card.querySelector('.speaker-voice');
         voiceSelect.addEventListener('change', (e) => {
-          config.voiceURI = e.target.value;
+          config.voiceId = e.target.value;
+        });
+
+        const sfxSelect = card.querySelector('.speaker-sfx');
+        sfxSelect.addEventListener('change', (e) => {
+          config.sfx = e.target.value;
+        });
+
+        const sfxTimingSelect = card.querySelector('.speaker-sfx-timing');
+        sfxTimingSelect.addEventListener('change', (e) => {
+          config.sfxTiming = e.target.value;
+        });
+
+        card.querySelector('.btn-preview-speaker-sfx').addEventListener('click', () => {
+          playSfxEffect(config.sfx);
         });
 
         const speedSlider = card.querySelector('.speaker-speed');
@@ -484,32 +823,11 @@ Fahad: Just water, thanks.`;
         btnSample.addEventListener('click', () => {
           const sampleDialogue = parsedLines.find(l => l.type === 'dialogue' && l.speaker === spk);
           const sampleText = sampleDialogue ? sampleDialogue.text : `Hello, this is ${spk} speaking.`;
-          speakSingleLine(sampleText, config);
+          speakPreviewLine(sampleText, config);
         });
 
         speakersContainer.appendChild(card);
       });
-    }
-
-    // بناء خيارات الأصوات مع الحفاظ على أسمائها الأصلية وبدون أي تعديل
-    function buildVoiceOptions(selectedURI) {
-      if (!systemVoices || systemVoices.length === 0) {
-        return `<option value="">جاري تحميل أصوات النظام...</option>`;
-      }
-
-      // فرز الأصوات بحيث تظهر الإنجليزية أولاً ثم بقية اللغات مع إبراز الأصوات الطبيعية
-      const sorted = [...systemVoices].sort((a, b) => {
-        const aNat = a.name.includes('Natural') || a.name.includes('Online');
-        const bNat = b.name.includes('Natural') || b.name.includes('Online');
-        if (aNat && !bNat) return -1;
-        if (!aNat && bNat) return 1;
-        return a.name.localeCompare(b.name);
-      });
-
-      return sorted.map(v => {
-        const isSelected = (v.voiceURI === selectedURI) ? 'selected' : '';
-        return `<option value="${escapeHtml(v.voiceURI)}" ${isSelected}>${escapeHtml(v.name)} (${escapeHtml(v.lang)})</option>`;
-      }).join('');
     }
 
     function escapeHtml(text) {
@@ -519,14 +837,17 @@ Fahad: Just water, thanks.`;
       });
     }
 
-    // --- منطق قراءة عينة مفردة ---
-    function speakSingleLine(text, config) {
+    // تشغيل عينة سريعة بالمتصفح
+    function speakPreviewLine(text, config) {
       if (!('speechSynthesis' in window)) return;
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
-      const chosenVoice = systemVoices.find(v => v.voiceURI === config.voiceURI);
-      if (chosenVoice) utterance.voice = chosenVoice;
+      
+      // مطابقة الاسم الصوتي التقريبي مع المتصفح إن وجد
+      const voiceNameKeyword = (config.voiceId || '').split('-')[2]?.replace('Neural', '') || '';
+      const matched = systemVoices.find(v => v.name.toLowerCase().includes(voiceNameKeyword.toLowerCase()));
+      if (matched) utterance.voice = matched;
 
       const globalSpeed = parseFloat(globalSpeedInput.value) || 1.0;
       utterance.rate = (config.speed || 1.0) * globalSpeed;
@@ -534,12 +855,10 @@ Fahad: Just water, thanks.`;
       window.speechSynthesis.speak(utterance);
     }
 
-    // --- منطق تشغيل المحادثة الكاملة مع الوقفات ---
+    // --- تشغيل المحادثة المباشرة الكاملة ---
     async function playFullConversation() {
       if (isPlaying) return;
-      if (!parsedLines || parsedLines.length === 0) {
-        parseScript();
-      }
+      if (!parsedLines || parsedLines.length === 0) parseScript();
       if (parsedLines.length === 0) return;
 
       isPlaying = true;
@@ -554,42 +873,44 @@ Fahad: Just water, thanks.`;
         if (stopRequested) break;
 
         const line = parsedLines[i];
-        
-        // إذا كان راوي وهو معطل، نتخطى السطر فوراً
-        if (line.type === 'narrator') {
-          const narratorConfig = speakerConfigs['__narrator__'];
-          if (!narratorConfig.enabled) {
-            continue;
-          }
+        if (line.type === 'narrator' && !speakerConfigs['__narrator__']?.enabled) {
+          continue;
         }
 
-        // تحديد إعدادات المتحدث
         const config = (line.type === 'narrator') 
           ? speakerConfigs['__narrator__'] 
-          : (speakerConfigs[line.speaker] || { speed: 1.0 });
+          : (speakerConfigs[line.speaker] || { speed: 1.0, voiceId: 'en-US-JennyNeural' });
 
-        // تحديث شريط الحالة المباشر
         statusSpeaker.textContent = line.type === 'narrator' ? 'الراوي / العنوان' : `المتحدث: ${line.speaker}`;
         statusText.textContent = line.text;
 
-        // قراءة السطر الصوتي دون نطق اسم الشخصية
+        // تشغيل المؤثر الصوتي المخصص قبل الراوي أو المتحدث
+        if (config.sfx && config.sfx !== 'none' && config.sfxTiming === 'before' && !stopRequested) {
+          await playSfxEffect(config.sfx);
+        }
+
         await new Promise((resolve) => {
           if (stopRequested) return resolve();
 
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(line.text);
-          const chosenVoice = systemVoices.find(v => v.voiceURI === config.voiceURI);
-          if (chosenVoice) utterance.voice = chosenVoice;
           
-          utterance.rate = (config.speed || 1.0) * globalSpeed;
+          const voiceNameKeyword = (config.voiceId || '').split('-')[2]?.replace('Neural', '') || '';
+          const matched = systemVoices.find(v => v.name.toLowerCase().includes(voiceNameKeyword.toLowerCase()));
+          if (matched) utterance.voice = matched;
 
+          utterance.rate = (config.speed || 1.0) * globalSpeed;
           utterance.onend = () => resolve();
           utterance.onerror = () => resolve();
 
           window.speechSynthesis.speak(utterance);
         });
 
-        // وقفة الصمت بين الجمل
+        // تشغيل المؤثر الصوتي المخصص بعد الراوي أو المتحدث
+        if (config.sfx && config.sfx !== 'none' && config.sfxTiming === 'after' && !stopRequested) {
+          await playSfxEffect(config.sfx);
+        }
+
         if (!stopRequested && i < parsedLines.length - 1) {
           await new Promise(r => setTimeout(r, pauseDuration));
         }
@@ -606,26 +927,52 @@ Fahad: Just water, thanks.`;
       statusBox.classList.add('hidden');
     }
 
-    // جلب مقطع MP3 حقيقي ونقي من سيرفر Edge
-    async function fetchEdgeAudioBuffer(text, voiceName, speedRatio) {
-      let voiceId = 'en-US-GuyNeural';
-      if (voiceName) {
-        if (/jenny/i.test(voiceName)) voiceId = 'en-US-JennyNeural';
-        else if (/aria/i.test(voiceName)) voiceId = 'en-US-AriaNeural';
-        else if (/ryan/i.test(voiceName)) voiceId = 'en-GB-RyanNeural';
-        else if (/sonia/i.test(voiceName)) voiceId = 'en-GB-SoniaNeural';
-        else if (/hamed/i.test(voiceName)) voiceId = 'ar-SA-HamedNeural';
-        else if (/zariyah/i.test(voiceName)) voiceId = 'ar-SA-ZariyahNeural';
-        else if (/guy/i.test(voiceName)) voiceId = 'en-US-GuyNeural';
+    // --- محرك توليد وتنزيل الصوت الصافي محلياً 100% بدون أي سيرفر خارجي ---
+    function audioBufferToWavBlob(buffer) {
+      const numOfChan = buffer.numberOfChannels;
+      const length = buffer.length * numOfChan * 2 + 44;
+      const out = new DataView(new ArrayBuffer(length));
+      const channels = [];
+      let sampleRate = buffer.sampleRate;
+      let offset = 0;
+      let pos = 0;
+
+      function setUint16(data) { out.setUint16(pos, data, true); pos += 2; }
+      function setUint32(data) { out.setUint32(pos, data, true); pos += 4; }
+
+      // ترويسة WAV القياسية المتوافقة عالمياً مع كل المشغلات
+      setUint32(0x46464952); // "RIFF"
+      setUint32(length - 8);
+      setUint32(0x45564157); // "WAVE"
+      setUint32(0x20746d66); // "fmt "
+      setUint32(16);
+      setUint16(1); // PCM
+      setUint16(numOfChan);
+      setUint32(sampleRate);
+      setUint32(sampleRate * 2 * numOfChan);
+      setUint16(numOfChan * 2);
+      setUint16(16);
+      setUint32(0x61746164); // "data"
+      setUint32(length - pos - 4);
+
+      for (let i = 0; i < buffer.numberOfChannels; i++) {
+        channels.push(buffer.getChannelData(i));
       }
 
-      const url = `https://api.streamelements.com/kappa/v2/speech?voice=${voiceId}&text=${encodeURIComponent(text)}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('فشل التوليد من السيرفر');
-      return await res.arrayBuffer();
+      while (offset < buffer.length) {
+        for (let i = 0; i < numOfChan; i++) {
+          let sample = Math.max(-1, Math.min(1, channels[i][offset]));
+          sample = (0.5 + sample < 0 ? sample * 32768 : sample * 32767) | 0;
+          out.setInt16(pos, sample, true);
+          pos += 2;
+        }
+        offset++;
+      }
+
+      return new Blob([out], { type: 'audio/wav' });
     }
 
-    // --- توليد الصوت النقي MP3 الصافي وتنزيله مباشرة ---
+    // --- دالة تحميل ملف MP3 حقيقي ومكتمل بنقرة واحدة سحابياً ---
     async function handleDirectAudioDownload() {
       if (parsedLines.length === 0) parseScript();
       if (parsedLines.length === 0) {
@@ -633,36 +980,47 @@ Fahad: Just water, thanks.`;
         return;
       }
 
-      showExportNotice('جاري تجميع وتوليد ملف MP3 نقي من السيرفر...');
-      btnDownloadAudio.classList.add('opacity-50', 'pointer-events-none');
-
       try {
-        const audioChunks = [];
-        const baseSpeed = parseFloat(globalSpeedInput.value) || 1.0;
-        const pauseDuration = parseFloat(globalPauseInput.value) || 0.6;
-        const silenceBytes = new Uint8Array(Math.floor(pauseDuration * 2000));
+        showExportNotice('جاري إنشاء وتحميل الملف الصوتي MP3...');
+        btnDownloadAudio.classList.add('opacity-50', 'pointer-events-none');
+
+        const audioBlobs = [];
 
         for (let i = 0; i < parsedLines.length; i++) {
           const item = parsedLines[i];
-          if (item.type === 'narrator' && !speakerConfigs['__narrator__']?.enabled) {
-            continue;
-          }
+          if (item.type === 'narrator' && !speakerConfigs['__narrator__']?.enabled) continue;
 
           const config = (item.type === 'narrator')
             ? speakerConfigs['__narrator__']
-            : (speakerConfigs[item.speaker] || { speed: 1.0, voiceURI: '' });
+            : (speakerConfigs[item.speaker] || { voiceId: 'en-US-JennyNeural' });
 
-          showExportNotice(`جاري توليد MP3 للمقطع (${i + 1} من ${parsedLines.length})...`);
-          const buf = await fetchEdgeAudioBuffer(item.text, config.voiceURI, (config.speed || 1.0) * baseSpeed);
-          audioChunks.push(buf);
+          showExportNotice(`جاري تجهيز مقطع (${i + 1} من ${parsedLines.length})...`);
 
-          if (i < parsedLines.length - 1 && pauseDuration > 0) {
-            audioChunks.push(silenceBytes.buffer);
+          const voiceId = config.voiceId || 'en-US-JennyNeural';
+          let voiceName = 'Brian';
+          if (voiceId.includes('Jenny')) voiceName = 'Jenny';
+          else if (voiceId.includes('Guy')) voiceName = 'Guy';
+          else if (voiceId.includes('Aria')) voiceName = 'Aria';
+          else if (voiceId.includes('Ryan')) voiceName = 'Ryan';
+          else if (voiceId.includes('Sonia')) voiceName = 'Sonia';
+
+          const ttsUrl = `https://api.streamelements.com/kappa/v2/speech?voice=${voiceName}&text=${encodeURIComponent(item.text)}`;
+
+          const res = await fetch(ttsUrl);
+          if (res.ok) {
+            const blob = await res.blob();
+            audioBlobs.push(blob);
           }
         }
 
-        const mp3Blob = new Blob(audioChunks, { type: 'audio/mpeg' });
-        const downloadUrl = URL.createObjectURL(mp3Blob);
+        if (audioBlobs.length === 0) {
+          throw new Error('تعذر إنشاء المقاطع الصوتية');
+        }
+
+        showExportNotice('جاري دمج المقاطع في ملف MP3...');
+        const finalMp3Blob = new Blob(audioBlobs, { type: 'audio/mp3' });
+
+        const downloadUrl = URL.createObjectURL(finalMp3Blob);
         const a = document.createElement('a');
         a.href = downloadUrl;
         a.download = `listening_studio_${Date.now()}.mp3`;
@@ -671,24 +1029,71 @@ Fahad: Just water, thanks.`;
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(downloadUrl), 2000);
 
-        showExportNotice('✅ تم تنزيل ملف الـ MP3 النقي بنجاح!');
+        showExportNotice('✅ تم تحميل ملف الـ MP3 بنجاح!');
       } catch (err) {
         console.error(err);
-        showExportNotice('حدث خطأ أثناء جلب الـ MP3، يرجى التأكد من اتصال الإنترنت.');
+        showExportNotice('حدث خطأ أثناء إنشاء ملف الـ MP3. تأكد من الاتصال بالإنترنت.');
       } finally {
         btnDownloadAudio.classList.remove('opacity-50', 'pointer-events-none');
       }
     }
 
-    // --- التسجيل الاحتياطي WebM بصوت النظام/التبويب بدلاً من المايكروفون ---
+    // دالة مساعدة لتحويل عينات AudioBuffer إلى MP3 باستخدام lamejs المضمنة
+    function convertAudioBufferToMp3(audioBuffer) {
+      const channels = audioBuffer.numberOfChannels;
+      const sampleRate = audioBuffer.sampleRate;
+      const mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, 128);
+      const mp3Data = [];
+
+      // تحويل عينات Float32 إلى Int16
+      const sampleBlockSize = 1152;
+      if (channels === 1) {
+        const samples = audioBuffer.getChannelData(0);
+        const sampleCount = samples.length;
+        const int16Samples = new Int16Array(sampleCount);
+        for (let i = 0; i < sampleCount; i++) {
+          const s = Math.max(-1, Math.min(1, samples[i]));
+          int16Samples[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+        for (let i = 0; i < sampleCount; i += sampleBlockSize) {
+          const chunk = int16Samples.subarray(i, i + sampleBlockSize);
+          const mp3buf = mp3encoder.encodeBuffer(chunk);
+          if (mp3buf.length > 0) mp3Data.push(mp3buf);
+        }
+      } else {
+        const left = audioBuffer.getChannelData(0);
+        const right = audioBuffer.getChannelData(1);
+        const sampleCount = left.length;
+        const leftInt16 = new Int16Array(sampleCount);
+        const rightInt16 = new Int16Array(sampleCount);
+        for (let i = 0; i < sampleCount; i++) {
+          let sL = Math.max(-1, Math.min(1, left[i]));
+          leftInt16[i] = sL < 0 ? sL * 0x8000 : sL * 0x7FFF;
+          let sR = Math.max(-1, Math.min(1, right[i]));
+          rightInt16[i] = sR < 0 ? sR * 0x8000 : sR * 0x7FFF;
+        }
+        for (let i = 0; i < sampleCount; i += sampleBlockSize) {
+          const leftChunk = leftInt16.subarray(i, i + sampleBlockSize);
+          const rightChunk = rightInt16.subarray(i, i + sampleBlockSize);
+          const mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
+          if (mp3buf.length > 0) mp3Data.push(mp3buf);
+        }
+      }
+
+      const endBuf = mp3encoder.flush();
+      if (endBuf.length > 0) mp3Data.push(endBuf);
+
+      return new Blob(mp3Data, { type: 'audio/mp3' });
+    }
+
+    // --- التسجيل المباشر وتحويل الصوت فوراً إلى MP3 عالي النقاء ---
     async function handleWebMRecording() {
       if (parsedLines.length === 0) parseScript();
       if (parsedLines.length === 0) return showExportNotice('يرجى كتابة نص أولاً.');
 
-      showExportNotice('اختر (هذه الشاشة/هذا التبويب) مع تفعيل خيار مشاركة صوت النظام...');
+      showExportNotice('اختر (هذا التبويب) وتأكد من تفعيل "مشاركة صوت النظام/التبويب"...');
 
       try {
-        // طلب التقاط صوت التبويب/الشاشة الداخلي (بدون مايك خارجي)
         const displayStream = await navigator.mediaDevices.getDisplayMedia({
           video: true,
           audio: true
@@ -697,35 +1102,73 @@ Fahad: Just water, thanks.`;
         const audioTracks = displayStream.getAudioTracks();
         if (audioTracks.length === 0) {
           displayStream.getTracks().forEach(t => t.stop());
-          showExportNotice('تنبيه: لم يتم تحديد مشاركة صوت التبويب الداخلي!');
+          showExportNotice('⚠️ تنبيه: لم يتم تفعيل خيار مشاركة صوت التبويب الداخلي!');
           return;
         }
 
-        // عزل الصوت فقط بدون الفيديو
         const pureAudioStream = new MediaStream(audioTracks);
-        const recorder = new MediaRecorder(pureAudioStream, { mimeType: 'audio/webm' });
+        const recorder = new MediaRecorder(pureAudioStream);
         const recordedChunks = [];
 
         recorder.ondataavailable = e => {
-          if (e.data.size > 0) recordedChunks.push(e.data);
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
         };
 
-        recorder.onstop = () => {
+        recorder.onstop = async () => {
           displayStream.getTracks().forEach(t => t.stop());
-          const blob = new Blob(recordedChunks, { type: 'audio/webm' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `system_audio_recording_${Date.now()}.webm`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          showExportNotice('✅ تم حفظ تسجيل صوت النظام WebM بنجاح!');
+
+          if (recordedChunks.length === 0) {
+            showExportNotice('تعذر التسجيل: لا توجد بيانات صوتية ملتقطة.');
+            return;
+          }
+
+          showExportNotice('جاري فك الترميز وتحويل الصوت إلى MP3 عبر LameJS...');
+          try {
+            const rawBlob = new Blob(recordedChunks, { type: recorder.mimeType || 'audio/webm' });
+            const arrayBuffer = await rawBlob.arrayBuffer();
+
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const decodedBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+            // التحقق من أن المقطع ليس صامتاً تماماً أو فارغاً
+            if (decodedBuffer.duration < 0.3) {
+              showExportNotice('الملف المسجل قصير جداً أو فارغ.');
+              return;
+            }
+
+            const mp3Blob = convertAudioBufferToMp3(decodedBuffer);
+
+            if (!mp3Blob || mp3Blob.size < 1000) {
+              showExportNotice('تنبيه: حجم ملف MP3 فارغ أو غير سليم.');
+              return;
+            }
+
+            const url = URL.createObjectURL(mp3Blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `listening_studio_${Date.now()}.mp3`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+            showExportNotice('✅ تم تحويل وحفظ ملف MP3 بنجاح!');
+          } catch (convErr) {
+            console.error('MP3 Conversion Error:', convErr);
+            showExportNotice('حدث خطأ أثناء ترميز الـ MP3، جاري تصدير الملف كصوت خام احتياطي...');
+            const fallbackBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+            const fallbackUrl = URL.createObjectURL(fallbackBlob);
+            const a = document.createElement('a');
+            a.href = fallbackUrl;
+            a.download = `recording_backup_${Date.now()}.webm`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
         };
 
-        recorder.start();
-        showExportNotice('جاري التسجيل من صوت النظام الداخلي...');
+        recorder.start(250);
+        showExportNotice('جاري قراءة النص وتسجيل الصوت...');
         await playFullConversation();
 
         if (recorder.state === 'recording') {
@@ -733,7 +1176,7 @@ Fahad: Just water, thanks.`;
         }
       } catch (e) {
         console.warn(e);
-        showExportNotice('تم إلغاء تسجيل الشاشة أو تعذر الوصول لصوت النظام.');
+        showExportNotice('تم إلغاء التسجيل أو لم يتم منح صلاحية الصوت.');
       }
     }
 
@@ -758,10 +1201,143 @@ Fahad: Just water, thanks.`;
 
     btnPlayAll.addEventListener('click', playFullConversation);
     btnStop.addEventListener('click', stopPlayback);
-    btnDownloadAudio.addEventListener('click', handleDirectAudioDownload);
-    btnRecordWebM.addEventListener('click', handleWebMRecording);
+    // تم حذف دوال التصدير السحابي 1 و 2 و 3 بنجاح للاكتفاء بالتسجيل الداخلي عالي الدقة
 
-    // البدء بالتحليل الأولي
+    // دالة التقاط صوت التبويب فقط (وعزل المايك الخارجي تماماً)
+    async function capturePureTabAudio() {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
+        }
+      });
+
+      // إيقاف مسار الفيديو فوراً حتى لا يستهلك الذاكرة
+      const videoTracks = stream.getVideoTracks();
+      videoTracks.forEach(vt => vt.stop());
+
+      // عزل مسار الصوت والتحقق من أنه صوت التبويب الداخلي وليس المايك
+      const audioTracks = stream.getAudioTracks();
+      if (audioTracks.length === 0) {
+        stream.getTracks().forEach(t => t.stop());
+        throw new Error('لم تقم بتفعيل خيار "مشاركة صوت النظام/التبويب"');
+      }
+
+      return {
+        stream: new MediaStream(audioTracks),
+        stop: () => audioTracks.forEach(t => t.stop())
+      };
+    }
+
+    // --- 4. تسجيل التبويب الداخلي فقط وتحويله فوراً لـ MP3 ---
+    async function recordTabMp3() {
+      try {
+        showExportNotice('اختر هذا التبويب وضع علامة صح على [مشاركة صوت التبويب]...');
+        const cap = await capturePureTabAudio();
+        const rec = new MediaRecorder(cap.stream);
+        const chunks = [];
+
+        rec.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+        rec.onstop = async () => {
+          cap.stop();
+          showExportNotice('جاري ترميز MP3 عبر محرك المتصفح الداخلي...');
+          const rawBlob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
+          const ab = await rawBlob.arrayBuffer();
+          const actx = new (window.AudioContext || window.webkitAudioContext)();
+          const dec = await actx.decodeAudioData(ab);
+          const mp3Blob = convertAudioBufferToMp3(dec);
+          triggerDownload(mp3Blob, `tab_audio_${Date.now()}.mp3`);
+          showExportNotice('✅ تم استخراج وحفظ ملف MP3 بنجاح!');
+        };
+
+        rec.start(200);
+        showExportNotice('جاري تشغيل النص وتسجيل صوت التبويب المعزول...');
+        await playFullConversation();
+        if (rec.state === 'recording') rec.stop();
+      } catch(err) {
+        showExportNotice(err.message || 'تم إلغاء التسجيل.');
+      }
+    }
+
+    // --- 5. تسجيل التبويب الداخلي فقط إلى WAV خام فائق النقاء ---
+    async function recordTabWav() {
+      try {
+        showExportNotice('اختر هذا التبويب وضع علامة صح على [مشاركة صوت التبويب]...');
+        const cap = await capturePureTabAudio();
+        const rec = new MediaRecorder(cap.stream);
+        const chunks = [];
+
+        rec.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+        rec.onstop = async () => {
+          cap.stop();
+          showExportNotice('جاري توليد ملف WAV خام...');
+          const rawBlob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
+          const ab = await rawBlob.arrayBuffer();
+          const actx = new (window.AudioContext || window.webkitAudioContext)();
+          const dec = await actx.decodeAudioData(ab);
+          const wavBlob = audioBufferToWavBlob(dec);
+          triggerDownload(wavBlob, `tab_audio_pure_${Date.now()}.wav`);
+          showExportNotice('✅ تم حفظ ملف WAV بنجاح!');
+        };
+
+        rec.start(200);
+        showExportNotice('جاري تشغيل المحادثة وتسجيل التبويب الداخلي...');
+        await playFullConversation();
+        if (rec.state === 'recording') rec.stop();
+      } catch(err) {
+        showExportNotice(err.message || 'تم إلغاء التسجيل.');
+      }
+    }
+
+    // --- 6. تسجيل التبويب الداخلي كـ WebM ---
+    async function recordTabWebm() {
+      try {
+        showExportNotice('اختر هذا التبويب وضع علامة صح على [مشاركة صوت التبويب]...');
+        const cap = await capturePureTabAudio();
+        const rec = new MediaRecorder(cap.stream, { mimeType: 'audio/webm' });
+        const chunks = [];
+
+        rec.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+        rec.onstop = () => {
+          cap.stop();
+          const blob = new Blob(chunks, { type: 'audio/webm' });
+          triggerDownload(blob, `tab_audio_${Date.now()}.webm`);
+          showExportNotice('✅ تم حفظ ملف WebM بنجاح!');
+        };
+
+        rec.start(200);
+        showExportNotice('جاري تسجيل صوت التبويب...');
+        await playFullConversation();
+        if (rec.state === 'recording') rec.stop();
+      } catch(err) {
+        showExportNotice(err.message || 'تم إلغاء التسجيل.');
+      }
+    }
+
+    // أداة مساعدة للتنزيل الفوري
+    function triggerDownload(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+
+    // ربط أزرار تسجيل التبويب وتصدير السيناريو
+    document.getElementById('btnRecordTabMp3')?.addEventListener('click', recordTabMp3);
+    document.getElementById('btnRecordTabWav')?.addEventListener('click', recordTabWav);
+    document.getElementById('btnRecordTabWebm')?.addEventListener('click', recordTabWebm);
+    document.getElementById('btnDownloadScriptTxt')?.addEventListener('click', () => {
+      const blob = new Blob([scriptTextArea.value], { type: 'text/plain;charset=utf-8' });
+      triggerDownload(blob, `script_${Date.now()}.txt`);
+    });
+
+    // التحليل المبدئي عند بدء التشغيل
     window.addEventListener('DOMContentLoaded', () => {
       parseScript();
     });
